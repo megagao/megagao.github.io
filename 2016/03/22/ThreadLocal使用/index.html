@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>ThreadLocal使用 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="引言ThreadLocal的官方API解释为：
+“该类提供了线程局部 (thread-local) 变量。这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。”
+大概">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThreadLocal使用">
+<meta property="og:url" content="http://realfond.cn/2016/03/22/ThreadLocal使用/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="引言ThreadLocal的官方API解释为：
+“该类提供了线程局部 (thread-local) 变量。这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。”
+大概">
+<meta property="og:updated_time" content="2016-03-23T13:57:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ThreadLocal使用">
+<meta name="twitter:description" content="引言ThreadLocal的官方API解释为：
+“该类提供了线程局部 (thread-local) 变量。这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。”
+大概">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-ThreadLocal使用" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/22/ThreadLocal使用/" class="article-date">
+  	<time datetime="2016-03-22T12:54:33.000Z" itemprop="datePublished">2016-03-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ThreadLocal使用
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>ThreadLocal的官方API解释为：</p>
+<p>“该类提供了线程局部 (thread-local) 变量。这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。”</p>
+<p>大概的意思有两点：</p>
+<blockquote>
+<p>ThreadLocal提供了一种访问某个变量的特殊方式：访问到的变量属于当前线程，即保证每个线程的变量不一样，而同一个线程在任何地方拿到的变量都是一致的，这就是所谓的线程隔离。<br>   <br>如果要使用ThreadLocal，通常定义为private static类型，在我看来最好是定义为private static final类型。</p>
+</blockquote>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>ThreadLocal通常用来共享数据，当你想在多个方法中使用某个变量，这个变量是当前线程的状态，其它线程不依赖这个变量，你第一时间想到的就是把变量定义在方法内部，然后再方法之间传递参数来使用，这个方法能解决问题，但是有个烦人的地方就是，每个方法都需要声明形参，多处声明，多处调用。影响代码的美观和维护。有没有一种方法能将变量像private static形式来访问呢？这样在类的任何一处地方就都能使用。这个时候ThreadLocal大显身手了。 <a id="more"></a></p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>我们首先来看一段代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">import java.util.HashMap;</span><br><span class="line"></span><br><span class="line">import java.util.Map;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class T<span class="built_in">read</span>LocalTest &#123;</span><br><span class="line"></span><br><span class="line">	 static ThreadLocal&lt;HashMap&gt; threadLocal = new ThreadLocal&lt;HashMap&gt;()&#123;</span><br><span class="line">		</span><br><span class="line">		 @Override</span><br><span class="line">		</span><br><span class="line">		 protected HashMap <span class="function"><span class="title">initialValue</span></span>() &#123;</span><br><span class="line">		</span><br><span class="line">		 System.out.println(Thread.currentThread().getName()+”initialValue”);</span><br><span class="line">		</span><br><span class="line">		 <span class="built_in">return</span> new HashMap();</span><br><span class="line">	</span><br><span class="line">	 &#125;</span><br><span class="line"></span><br><span class="line"> &#125;; </span><br><span class="line"></span><br><span class="line">public static class T1 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">	private final static Map map = new HashMap();</span><br><span class="line">	</span><br><span class="line">	int id;</span><br><span class="line">	</span><br><span class="line">	 </span><br><span class="line">	</span><br><span class="line">	public T1(int id) &#123;</span><br><span class="line">	</span><br><span class="line">		this.id = id;</span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public void <span class="function"><span class="title">run</span></span>() &#123;</span><br><span class="line">	</span><br><span class="line">		// Map map = threadLocal.get();</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span> (int i = 0; i &lt; 20; i++) &#123;</span><br><span class="line">		</span><br><span class="line">			map.put(i, i + id * 100);</span><br><span class="line">			</span><br><span class="line">			try &#123;</span><br><span class="line">			</span><br><span class="line">			Thread.sleep(100);</span><br><span class="line">			</span><br><span class="line">			&#125; catch (Exception ex) &#123;</span><br><span class="line">			</span><br><span class="line">			&#125;</span><br><span class="line">	</span><br><span class="line">		&#125;</span><br><span class="line">	</span><br><span class="line">	System.out.println(Thread.currentThread().getName()</span><br><span class="line">	</span><br><span class="line">	+ “<span class="comment"># map.size()=” + map.size() + ” # ” + map);</span></span><br><span class="line">	</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">	</span><br><span class="line">		Thread[] runs = new Thread[15];</span><br><span class="line">		</span><br><span class="line">		T1 t = new T1(1);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span> (int i = 0; i &lt; runs.length; i++) &#123;</span><br><span class="line">		</span><br><span class="line">		runs[i] = new Thread(t);</span><br><span class="line">		</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span> (int i = 0; i &lt; runs.length; i++) &#123;</span><br><span class="line">		</span><br><span class="line">		runs[i].start();</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段程序的本意是，启动15个线程，线程向map中写入20个整型值，然后输出map。运行该程序，观察结果，我们会发现，map中压根就不止20个元素，这说明程序产生了线程安全问题。</p>
+<p>我们都知道HashMap是非线程安全的，程序启动了15个线程，他们共享了同一个map，15个线程都往map写对象，这势必引起线程安全问题。</p>
+<p>我们有两种方法解决这个问题：</p>
+<blockquote>
+<p> 1、将map的声明放到run方法中，这样map就成了方法内部变量，每个线程都有一份new HashMap()，无论多少个线程执行run方法，都不会有线程安全问题。这个方法也正如应用场景中提到的，如果有多处地方使用到map，传值是个烦人的地方。<br><br>   2、将HashMap换成Hashtable。用线程同步来解决问题，然而我们的程序只是想向一个map中写入20个整型的KEY-VALUE而已，并不需要线程同步，同步势必影响性能，得不偿失。<br><br>   3、ThreadLocal提供另外一种解决方案，即在解决方案a上边，将new HashMap()得到的实例变量，绑定到当前线程中。之后从任何地方，都可以通过ThreadLocal获取到该变量。将程序中的注释代码恢复，再将 private final static Map map = new HashMap();注释掉，运行程序，结果就是我们想要的。</p>
+</blockquote>
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><p>程序调用了get()方法，我们来看一下该方法的源码：</p>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>{
+
+    Thread t = Thread.currentThread();
+
+    ThreadLocalMap map = getMap(t);
+
+    <span class="keyword">if</span> (map != <span class="keyword">null</span>) 
+
+        ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);
+
+    <span class="keyword">if</span> (e != <span class="keyword">null</span>)
+
+        <span class="keyword">return</span> (T)e.value;
+
+}
+
+<span class="keyword">return</span> setInitialValue();
+
+}
+
+getMap方法的源码：
+
+<span class="function">ThreadLocalMap <span class="title">getMap</span><span class="params">(Thread t)</span> </span>{
+
+    <span class="keyword">return</span> t.threadLocals;
+
+}
+</code></pre>
+<p>该方法返回的是当前线程中的ThreadLocalMap实例。阅读Thread的源码我们发现Thread中有如下变量声明：</p>
+<pre><code class="java"><span class="comment">/* ThreadLocal values pertaining to this thread. This map is maintained
+
+* by the ThreadLocal class. */</span>
+
+ThreadLocal.ThreadLocalMap threadLocals = <span class="keyword">null</span>;
+</code></pre>
+<p>我们暂时可以将ThreadLocalMap理解为一个类似Map的这么个类，之后再讲解它。</p>
+<p>get()方法的大致意思就是从当前线程中拿到ThreadLocalMap的实例threadLocals，如果threadLocals不为空，那么就以当前ThreadLocal实例为KEY从threadLocals中拿到对应的VALUE。如果不为空，那么就调用setInitialValue()方法初始化threadLocals，最终返回的是initialValue()方法的返回值。下面是setInitialValue()方法的源码</p>
+<pre><code class="java"><span class="function"><span class="keyword">private</span> T <span class="title">setInitialValue</span><span class="params">()</span> </span>{
+
+    T value = initialValue();
+
+    Thread t = Thread.currentThread();
+
+    ThreadLocalMap map = getMap(t);
+
+    <span class="keyword">if</span> (map != <span class="keyword">null</span>)
+
+        map.set(<span class="keyword">this</span>, value);
+
+    <span class="keyword">else</span>
+
+        createMap(t, value);
+
+    <span class="keyword">return</span> value;
+
+}
+</code></pre>
+<p>我们看到map.set(this, value);这句代码将ThreadLocalMap的实例作为KEY，将initialValue()的返回值作为VALUE，set到了threadLocals中。</p>
+<p>程序在声明ThreadLocal实例的时候覆写了initialValue()，返回了VALUE，当然我们可以直接调用set(T t)方法来设置VALUE。下面是set(T t)方法的源码：</p>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>{
+
+    Thread t = Thread.currentThread();
+
+    ThreadLocalMap map = getMap(t);
+
+    <span class="keyword">if</span> (map != <span class="keyword">null</span>)
+
+        map.set(<span class="keyword">this</span>, value);
+
+    <span class="keyword">else</span>
+
+        createMap(t, value);
+
+}
+</code></pre>
+<p>我们看到它比setInitialValue()方法就少了个return语句。这两种方式都能达到初始化ThreadLocalMap实例的效果。</p>
+<p>我们再来看一下ThreadLocal类的结构。</p>
+<p>ThreadLocal类只有三个属性，如下：</p>
+<pre><code class="java"><span class="comment">/*ThreadLocal的hash值，map用它来存储值*/</span>
+
+<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> threadLocalHashCode = nextHashCode();
+
+<span class="comment">/*改类能以原子的方式更新int值，这里主要是在产生新的ThreadLocal实例时用来产生一个新的hash值，map用该值来存储对象*/</span>
+
+<span class="keyword">private</span> <span class="keyword">static</span> AtomicInteger nextHashCode =
+
+<span class="keyword">new</span> AtomicInteger();
+
+<span class="comment">/*该变量标识每次产生新的ThreadLocal实例时，hash值的增量*/</span>
+
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> HASH_INCREMENT = <span class="number">0x61c88647</span>;
+</code></pre>
+<p>剩下的就是一些方法。最关键的地方就是ThreadLocal定义了一个静态内部类ThreadLocalMap。我们在下一章节再来分析这个类。从ThreadLocal的类结构，我们可以看到，实际上问题的关键先生是ThreadLocalMap，ThreadLocal只是提供了管理的功能，我们也可以说ThreadLocal只是代理了ThreadLocalMap而已。<br>ThreadLocalMap源码分析</p>
+<p> 既然ThreadLocalMap实现了类似map的功能，那我们首先来看看它的set方法源码：</p>
+<pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(ThreadLocal key, Object value)</span> </span>{
+
+
+
+    <span class="comment">// We don’t use a fast path as with get() because it is at</span>
+
+    <span class="comment">// least as common to use set() to create new entries as</span>
+
+    <span class="comment">// it is to replace existing ones, in which case, a fast</span>
+
+    <span class="comment">// path would fail more often than not.</span>
+
+
+
+    Entry[] tab = table;
+
+    <span class="keyword">int</span> len = tab.length;
+
+    <span class="keyword">int</span> i = key.threadLocalHashCode &amp; (len-<span class="number">1</span>);
+
+
+
+    <span class="keyword">for</span> (Entry e = tab[i];e != <span class="keyword">null</span>;e = tab[i = nextIndex(i, len)]) {
+
+        ThreadLocal k = e.get();
+
+
+
+        <span class="keyword">if</span> (k == key) {
+
+            e.value = value;
+
+            <span class="keyword">return</span>;
+
+        }
+
+
+
+        <span class="keyword">if</span> (k == <span class="keyword">null</span>) {
+
+            replaceStaleEntry(key, value, i);
+
+            <span class="keyword">return</span>;
+
+        }
+
+    }
+
+
+
+    tab[i] = <span class="keyword">new</span> Entry(key, value);
+
+    <span class="keyword">int</span> sz = ++size;
+
+    <span class="keyword">if</span> (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)
+
+    rehash();
+
+}
+</code></pre>
+<p>这个方法的主要功能就是讲KEY-VALUE存储到ThreadLocalMap中，这里至少我们看到KEY实际上是key.threadLocalHashCode，ThreadLocalMap同样维护着Entry数组，这个Entry我们在下一节会讲解。这里涉及到了Hash冲突的处理，这里并不会向HashMap一样冲突了以链表的形式往后添加。如果对这个Hash冲突解决方案有兴趣，可以再进一步研究源码。</p>
+<p>既然ThreadLocalMap也是用Entry来存储对象，那我们来看看Entry类的声明，Entry被定义在ThreadLocalMap的内部：</p>
+<pre><code class="java"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span> <span class="keyword">extends</span> <span class="title">WeakReference</span>&lt;<span class="title">ThreadLocal</span>&gt; </span>{
+
+    <span class="comment">/** The value associated with this ThreadLocal. */</span>
+
+    Object value;
+
+
+
+    Entry(ThreadLocal k, Object v) {
+
+        <span class="keyword">super</span>(k);
+
+        value = v;
+
+    }
+
+}
+</code></pre>
+<p>这里我们看到Entry集成了WeakReference类，泛型声明了ThreadLocal，即每一个Entry对象都保留了对ThreadLocal实例的弱引用，之所以这么干的原因是，线程在结束之后需要将ThreadLocal实例从map中remove调，以便回收内存空间。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>首先，ThreadLocalMap并不是为了解决线程安全问题，而是提供了一种将实例绑定到当前线程的机制，类似于隔离的效果，实际上自己在方法中new出来变量也能达到类似的效果。ThreadLocalMap跟线程安全基本不搭边，绑定上去的实例也不是多线程公用的，而是每个线程new一份，这个实例肯定不是共用的，如果共用了，那就会引发线程安全问题。ThreadLocalMap最大的用处就是用来把实例变量共享成全局变量，在程序的任何方法中都可以访问到该实例变量而已。网上很多人说ThreadLocalMap是解决了线程安全问题，其实是望文生义，两者不是同类问题。 </p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/24/阿里感悟——如何才能加入阿里？/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          阿里感悟——如何才能加入阿里？
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/21/阿里感悟——如何准备面试/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">阿里感悟——如何准备面试</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="ThreadLocal使用" data-title="ThreadLocal使用" data-url="http://realfond.cn/2016/03/22/ThreadLocal使用/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>

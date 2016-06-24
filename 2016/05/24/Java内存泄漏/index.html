@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>Java内存泄漏 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近读《Effective Java》这本书里面，关于内存泄漏这一知识点很有收获，所以写出来分享一下，同时自己也能够更加深记忆并更深入理解。
+当我们从手工管理内存的语言（如C或CPP）转换到Java或Python等具有垃圾回收功能的语言的时候，我们的工作会变得更加容易，因为我们不用再去考虑内存分配与回收，这些将会通过虚拟机自动进行（由Daemon Thread完成对象回收），这同时也会使程序的安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存泄漏">
+<meta property="og:url" content="http://realfond.cn/2016/05/24/Java内存泄漏/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="最近读《Effective Java》这本书里面，关于内存泄漏这一知识点很有收获，所以写出来分享一下，同时自己也能够更加深记忆并更深入理解。
+当我们从手工管理内存的语言（如C或CPP）转换到Java或Python等具有垃圾回收功能的语言的时候，我们的工作会变得更加容易，因为我们不用再去考虑内存分配与回收，这些将会通过虚拟机自动进行（由Daemon Thread完成对象回收），这同时也会使程序的安全">
+<meta property="og:updated_time" content="2016-06-18T14:03:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存泄漏">
+<meta name="twitter:description" content="最近读《Effective Java》这本书里面，关于内存泄漏这一知识点很有收获，所以写出来分享一下，同时自己也能够更加深记忆并更深入理解。
+当我们从手工管理内存的语言（如C或CPP）转换到Java或Python等具有垃圾回收功能的语言的时候，我们的工作会变得更加容易，因为我们不用再去考虑内存分配与回收，这些将会通过虚拟机自动进行（由Daemon Thread完成对象回收），这同时也会使程序的安全">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-Java内存泄漏" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/05/24/Java内存泄漏/" class="article-date">
+  	<time datetime="2016-05-24T06:35:08.000Z" itemprop="datePublished">2016-05-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java内存泄漏
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近读《Effective Java》这本书里面，关于内存泄漏这一知识点很有收获，所以写出来分享一下，同时自己也能够更加深记忆并更深入理解。</p>
+<p>当我们从手工管理内存的语言（如C或CPP）转换到Java或Python等具有垃圾回收功能的语言的时候，我们的工作会变得更加容易，因为我们不用再去考虑内存分配与回收，这些将会通过虚拟机自动进行（由Daemon Thread完成对象回收），这同时也会使程序的安全性得到提升。但是，这并不意味着我们不再需要考虑内存管理的事情了，请看下面这个例子：</p>
+<pre><code class="java"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span></span>{
+    <span class="keyword">private</span> Object[] elements;
+    <span class="keyword">private</span> <span class="keyword">int</span> size=<span class="number">0</span>;
+
+    <span class="function"><span class="keyword">public</span> <span class="title">Stack</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span></span>{
+        <span class="keyword">this</span>.elements=<span class="keyword">new</span> Object[initialCapacity];
+    }
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(Object e)</span></span>{
+        ensureCapacity();
+        elements[size++]=e;
+    }
+
+    <span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>{
+        <span class="keyword">if</span>(size==<span class="number">0</span>)
+        <span class="keyword">throw</span> <span class="keyword">new</span> Exception();
+        <span class="keyword">return</span> elements[--size];
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacity</span><span class="params">()</span></span>{
+        <span class="keyword">if</span>(elements.length==size){
+            Object[] oldElements=elements;
+            elements=<span class="keyword">new</span> Object[<span class="number">2</span>*elements.length+<span class="number">1</span>];
+            System.arraycopy(oldElements,<span class="number">0</span>,elements,<span class="number">0</span>,size);
+        }
+    }
+}
+</code></pre>
+ <a id="more"></a>    
+<p>上面这段程序存在着内存泄漏，虽然不会报错，但是随着垃圾回收器活动的增加，或者内存占用的不断增加，程序性能的降低会逐渐表现出来。在极端情况下，这种内存泄露会导致磁盘交换，甚至有可能导致程序失败，当然，这种情况很少见。</p>
+<p>在支持垃圾回收的语言中，内存泄漏是很隐蔽的（称这类内存泄露为“<strong>无意识的对象保持</strong>”更为恰当）。如果一个对象被无意识地保留起来了，那么垃圾回收机制就不会处理这个对象，而且也不会处理被这个对象引用的所有其他对象。即使只有少量的几个对象引用被无意识地保留下来，也会有许许多多的对象被排除在垃圾回收机制之外，从而对性能造成潜在的重大影响。</p>
+<p>上面那段程序发生内存泄漏是因为：如果一个栈先是增长，然后再收缩，那么，被弹出来的对象将不会被当作垃圾进行回收，即使使用栈的程序不再引用这些对象，他们也不会被回收。这是因为栈内部维护着对这些对象的过期引用（指永远都不会再被解除的引用）。在本例中，凡是在elements数组的活动部分（指下标小于size的那些元素）之外的任何引用都是过期的。</p>
+<p>修复内存泄漏的方法也很简单：<strong>一旦对象过期，只需要清空这些引用即可</strong>。对于上面的例子中的stack而言，只要一个单元被弹出栈指向它的引用就过期了。将pop方法作如下改变即可：</p>
+<pre><code class="java"><span class="function"><span class="keyword">public</span> Object <span class="title">pop</span><span class="params">()</span></span>{
+    <span class="keyword">if</span>(size==<span class="number">0</span>) <span class="keyword">throw</span> <span class="keyword">new</span> EmptyStackException();
+    Object result= elements[--size];
+    elements[size]=<span class="keyword">null</span>;<span class="comment">//Eliminate obsolete reference</span>
+    <span class="keyword">return</span> result;
+}
+</code></pre>
+<p>清空过期引用的另一个好处是，如果它们以后被错误地解除引用，程序就会立刻抛出NullPointerException异常，而不是错误的运行下去。尽快地发现程序中的错误还是很有裨益的。</p>
+<p>介绍完了内存泄漏，可能我们从原来的根本不去管内存问题变成过分小心：对于每一个对象引用，一旦程序不再用到它，就把它清空。其实这样做既没必要，也不是我们所期望的，因为这样做会把程序代码弄得很乱。清空对象引用应该是一种例外，而不是一种规范行为。消除过期引用的最好方法是让包含该引用的变量结束其生面周期。如果是在最紧凑的作用域范围内定义每一个变量，这种情形就会自然而然地发生。</p>
+<p>那么，何时应该清空引用呢？简而言之，Stack类自己管理内存的特性使它易于遭受内存泄漏的影响。存储池包含了elements数组（对象引用单元，而不是对象本身）的元素。数组活动区域中的元素是已分配的，而数组其余部分的元素则是自由的。但是垃圾回收器并不知道这一点；对于垃圾回收器而言，elements数组中的所有对象引用都同等有效，只有程序员才知道数组的非活动部分是不重要的。程序员可以把这个情况告知垃圾回收器，即清空这些对象引用。</p>
+<p><strong>一般而言，只要类是自己管理内存，程序员就应该警惕内存泄漏问题。</strong>一旦元素被释放掉，则该元素中包含的任何对象引用都应该被清空。</p>
+<p>内存泄漏的另一个常见来源是<em>缓存</em>。一旦你把对象引用放到缓存中，它就很容易被遗忘掉，从而使得它不再有用之后很长一段时间内仍然留在缓存中。对于这个问题，有几种可能的解决方案。如果你正好要实现这样的缓存：只要在缓存之外存在对某个项的键的引用，该项就有意义，那么就可以用WeakHashMap代表缓存；当缓存中的项过期之后，它们就会自动被删除。记住只有当所要的缓存项的生命周期是由该键的外部引用而不是由值决定时，WeakHashMap才有用处。</p>
+<p>更为常见的情形则是，”缓存项的生命周期是否有意义”并不是很容易确定，随着时间的推移，其中的项会变得越来越没有价值。在这种情况下，缓存应该时不时地清除掉没用的项。这项清除工作可以由一个后台线程（可能是Timer或者ScheduledThreadPoolExecutor）来完成，或者也可以在给缓存添加新条目的时候顺便进行清理。LinkedHashMap类利用它的removeEldestEntry方法可以很容易地实现后一种方案。对于更加复杂的缓存，必须直接使用java.lang.ref。</p>
+<p>内存泄漏的第三个常见来源是<em>监听器和其他回调</em>。如果你在实现的是客户端注册回调却没有显式地取消注册的API，除非你采取某些动作，否则它们就会积聚。确保回调立即被当作垃圾回收的最佳方法是只保存它们的弱引用（weak reference），例如，只将它们保存成WeakHashMap中的键。</p>
+<p>由于内存泄漏通常不会表现成明显的失败，所以它们可以在一个系统中存在很多年。往往只有通过仔细检查代码，或者借助于调试工具（称为Heap Profiler）才能发现内存泄漏问题。因此，如果能够在内存泄漏发生之前就知道如何预测此类问题，并阻止它们发生，那是最好不过的了。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/06/08/JVM类加载机制（1）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          JVM类加载机制（1）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/05/18/23种设计模式全解析 /" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">23种设计模式全解析</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Java内存泄漏" data-title="Java内存泄漏" data-url="http://realfond.cn/2016/05/24/Java内存泄漏/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>

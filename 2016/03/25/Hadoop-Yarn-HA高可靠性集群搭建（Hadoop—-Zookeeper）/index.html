@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper） | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="自北京参加大数据培训，接触了机器学习的算法和MPI之后，我和我导师一直有搭建Hadoop集群的想法，于是我开始在网上收集资料，并阅读《Hadoop权威指南》与《Yarn权威指南》，同时且动手搭建了一个基于Hadoop2.0的HA高可靠性集群。
+Hadoop简介Hadoop被公认是一套行业大数据标准开源软件，在分布式环境下提供了海量数据的处理能力。几乎所有主流厂商都围绕Hadoop开发工具、开源软件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper）">
+<meta property="og:url" content="http://realfond.cn/2016/03/25/Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="自北京参加大数据培训，接触了机器学习的算法和MPI之后，我和我导师一直有搭建Hadoop集群的想法，于是我开始在网上收集资料，并阅读《Hadoop权威指南》与《Yarn权威指南》，同时且动手搭建了一个基于Hadoop2.0的HA高可靠性集群。
+Hadoop简介Hadoop被公认是一套行业大数据标准开源软件，在分布式环境下提供了海量数据的处理能力。几乎所有主流厂商都围绕Hadoop开发工具、开源软件">
+<meta property="og:image" content="http://img.blog.csdn.net/20160325205722709?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20160325205808819?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20140621123414093?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20140621123434500?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20140621123439046?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:updated_time" content="2016-05-31T06:18:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper）">
+<meta name="twitter:description" content="自北京参加大数据培训，接触了机器学习的算法和MPI之后，我和我导师一直有搭建Hadoop集群的想法，于是我开始在网上收集资料，并阅读《Hadoop权威指南》与《Yarn权威指南》，同时且动手搭建了一个基于Hadoop2.0的HA高可靠性集群。
+Hadoop简介Hadoop被公认是一套行业大数据标准开源软件，在分布式环境下提供了海量数据的处理能力。几乎所有主流厂商都围绕Hadoop开发工具、开源软件">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160325205722709?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/25/Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）/" class="article-date">
+  	<time datetime="2016-03-25T12:28:37.000Z" itemprop="datePublished">2016-03-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/项目/">项目</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>自北京参加大数据培训，接触了机器学习的算法和MPI之后，我和我导师一直有搭建Hadoop集群的想法，于是我开始在网上收集资料，并阅读《Hadoop权威指南》与《Yarn权威指南》，同时且动手搭建了一个基于Hadoop2.0的HA高可靠性集群。</p>
+<h2 id="Hadoop简介"><a href="#Hadoop简介" class="headerlink" title="Hadoop简介"></a>Hadoop简介</h2><p>Hadoop被公认是一套行业大数据标准开源软件，在分布式环境下提供了海量数据的处理能力。几乎所有主流厂商都围绕Hadoop开发工具、开源软件、商业化工具和技术服务。下图是Hadoop的生态体系：</p>
+<p><img src="http://img.blog.csdn.net/20160325205722709?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="HadoopEcosystem"><br> <a id="more"></a></p>
+<p><br></p>
+<h2 id="Hadoop的特点"><a href="#Hadoop的特点" class="headerlink" title="Hadoop的特点"></a>Hadoop的特点</h2><ul>
+<li>扩容能力（Scalable）：能可靠地（reliably）存储和处理千兆字节（PB）数据。</li>
+</ul>
+<ul>
+<li>成本低（Economical）：可以通过普通机器组成的服务器群来分发以及处理数据。这些服务器群总计可达数千个节点。</li>
+</ul>
+<ul>
+<li>高效率（Efficient）：通过分发数据，hadoop可以在数据所在的节点上并行地（parallel）处理它们，这使得处理非常的快速。</li>
+</ul>
+<ul>
+<li>可靠性（Reliable）：hadoop能自动地维护数据的多份副本，并且在任务失败后能自动地重新部署（redeploy）计算任务。</li>
+</ul>
+<p><br></p>
+<h2 id="Hadoop1-0与Hadoop2-0的比较"><a href="#Hadoop1-0与Hadoop2-0的比较" class="headerlink" title="Hadoop1.0与Hadoop2.0的比较"></a>Hadoop1.0与Hadoop2.0的比较</h2><p>Hadoop2.0相比较于Hadoop1.x来说，HDFS的架构与MapReduce的都有较大的变化，且速度上和可用性上都有了很大的提高，Hadoop2中有两个重要的变更：</p>
+<ul>
+<li>HDFS的NameNodes可以以集群的方式布署，增强了NameNodes的水平扩展能力和可用性；</li>
+</ul>
+<ul>
+<li>MapReduce将JobTracker中的资源管理及任务生命周期管理（包括定时触发及监控），拆分成两个独立的组件，并更名为YARN（Yet Another Resource Negotiator）。</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20160325205808819?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="Hadoop1.0与2.0"></p>
+<p><br></p>
+<p><strong>1、HDFS的变化 - 增强了NameNode的水平扩展及可用性</strong></p>
+<p><em>1.1、Hadoop的1.X架构的介绍</em></p>
+<p>而在1.x中的NameNodes只可能有一个，虽然可以通过SecondaryNameNode与NameNode进行数据同步备份，但是总会存在一定的时延，如果NameNode挂掉，但是如果有部份数据还没有同步到SecondaryNameNode上，还是可能会存在着数据丢失的问题。</p>
+<p>架构如下：</p>
+<p><img src="http://img.blog.csdn.net/20140621123414093?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="Hadoop的1.X架构"></p>
+<p>包含两层：</p>
+<p>Namespace</p>
+<ul>
+<li>包含目录、文件以及块的信息</li>
+</ul>
+<ul>
+<li>支持对Namespace相关文件系统的操作，如增加、删除、修改以及文件和目录的展示</li>
+</ul>
+<p>Block Storage Service包含两部份</p>
+<ul>
+<li>块管理（在Namenode中实现的）</li>
+</ul>
+<blockquote>
+<p>提供数据节点群集成员的登记，并定期通过心跳进行检查。<br><br><br>提供块报告以及块的存储位置的维护<br><br><br>提供对块的操作，如对块进行增删改的操作及获取块的存储地址、对块的复本的的复制以及存储位置的管理</p>
+</blockquote>
+<ul>
+<li>存储 - 提供Datanode进行数据的本地存储，并提供读写的操作</li>
+</ul>
+<p><em>1.2、Hadoop的2.X架构的介绍</em></p>
+<p>在2.X中，HDFS的变化，主要体现在增强了NameNode的水平扩展及可用性，可以同时部署多个NameNode，这些NameNodes之间是相互独立，也就是说他们不需要相互协调，DataNode同时在所有NameNodes注册，做为他们共有的存储节点，并向定时向所有的这些NameNodes发送心跳块使用情况的报告，并处理所有NameNodes向其发送的指令。</p>
+<p>架构如下：</p>
+<p> <img src="http://img.blog.csdn.net/20140621123434500?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="Hadoop的2.X架构"></p>
+<p>存储块池（Block Pool）</p>
+<p>一个存储块池是由一组存储块组成，它属于一个单独的Namespace（Namenode），集群中所有存储块池的存储块都是存放在Datanodes中的。每个存储块池与其它的存储块池都是独立管理的，因而其在为新的块生成Block IDs时，就不需要与其它Namespace（Namenode）中的存储块池进行协作，即使一个Namespace（Namenode）挂掉了，也不会使得Datanodes中的块被访问不到，因为其它Namespace（Namenode）中的存储块池也存放了Datanodes中所有存储块的信息。</p>
+<p>一个命名空间(Namespace)和它的块池一起被称为命名空间向量。它是一个自包含的管理单元。当一个Namenode/namespace被删除，存储于Datanodes中的相应的存储块池也会被删除掉，在集群的更新过程中，每个命名空间向量都是以一个整体进行升级的。</p>
+<p>集群ID（ClusterID）</p>
+<p>集群ID的加入，是用于确认集群中所有的节点，也可以在格式化其它Namenodes时指定集群ID，并使其加入到某个集群中。</p>
+<p><br></p>
+<p><strong>2、MapReduce拆分JobTracker为资源管理及任务生命周期管理两个独立的组件</strong></p>
+<p>MapReduce在Hadoop2中称为MR2或YARN，将JobTracker中的资源管理及任务生命周期管理（包括定时触发及监控），拆分成两个独立的服务，用于管理全部资源的ResourceManager以及管理每个应用的ApplicationMaster，ResourceManager用于管理向应用程序分配计算资源，每个ApplicationMaster用于管理应用程序、调度以及协调。一个应用程序可以是经典的MapReduce架构中的一个单独的任务，也可以是这些任务的一个DAG（有向无环图）任务。ResourceManager及每台机上的NodeManager服务，用于管理那台机的用户进程，形成计算架构。每个应用程序的ApplicationMaster实际上是一个框架具体库，并负责从ResourceManager中协调资源及与NodeManager(s)协作执行并监控任务。</p>
+<p>架构图：</p>
+<p><img src="http://img.blog.csdn.net/20140621123439046?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvZmVuZ2xpYmluZw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="MR2"></p>
+<p>其中ResourceManager包含两个主要的组件：定时调用器(Scheduler)以及应用管理器(ApplicationManager)。</p>
+<p>定时调用器(Scheduler)：</p>
+<p>定时调度器负责向应用程序分配置资源，它不做监控以及应用程序的状 态跟踪，并且它不保证会重启由于应用程序本身或硬件出错而执行失败 的应用程序。</p>
+<p>应用管理器(ApplicationManager)：</p>
+<p>应用程序管理器负责接收新任务，协调并提供在ApplicationMaster容 器失败时的重启功能。</p>
+<p>节点管理器（NodeManager）：</p>
+<p>NodeManager是ResourceManager在每台机器的上代理，负责容器的管 理，并监控他们的资源使用情况（cpu，内存，磁盘及网络等），以及向 ResourceManager/Scheduler提供这些资源使用报告。</p>
+<p>应用总管（ApplicationMaster）：</p>
+<p>每个应用程序的ApplicationMaster负责从Scheduler申请资源，以及 跟踪这些资源的使用情况以及任务进度的监控。</p>
+<p><br></p>
+<h2 id="HA高可靠性集群搭建"><a href="#HA高可靠性集群搭建" class="headerlink" title="HA高可靠性集群搭建"></a>HA高可靠性集群搭建</h2><p>集群环境是在同一台电脑上搭建的，宿主环境使用VMWare（VMWare虽较耗资源，但是功能比oracle的virtualBox强大、方便）安装了6台CentOS虚拟机，更改虚拟机ip并设置hostonly通信方式。接着将JDK装到每台虚拟机中，并配置好环境变量，然后开始安装hadoop。搭建的集群规划如下：<table> <tr> <th>主机名</th> <th>IP</th> <th>安装的软件</th> <th>运行的进程</th> </tr> <tr> <td>CentOs01</td> <td>192.168.1.111</td> <td>jdk、hadoop</td> <td>NameNode、DFSZKFailoverController</td> </tr> <tr> <td>CentOs02</td> <td>192.168.1.112</td> <td>jdk、hadoop</td> <td>NameNode、DFSZKFailoverController</td> </tr> <tr> <td>CentOs03</td> <td>192.168.1.113</td> <td>jdk、hadoop</td> <td>ResourceManager</td> </tr> <tr> <td>CentOs04</td> <td>192.168.1.114</td> <td>jdk、hadoop、zookeeper</td> <td>DataNode、NodeManager、JournalNode、QuorumPeerMain</td> </tr> <tr> <td>CentOs05</td> <td>192.168.1.115</td> <td>jdk、hadoop、zookeeper</td> <td>DataNode、NodeManager、JournalNode、QuorumPeerMain</td> </tr> <tr> <td>CentOs06</td> <td>192.168.1.116</td> <td>jdk、hadoop、zookeeper</td> <td>DataNode、NodeManager、JournalNode、QuorumPeerMain</td> </tr> </table></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/03/28/深入理解并行编程-锁/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          深入理解并行编程-锁
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/24/阿里感悟——如何才能加入阿里？/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">阿里感悟——如何才能加入阿里？</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）" data-title="Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper）" data-url="http://realfond.cn/2016/03/25/Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>

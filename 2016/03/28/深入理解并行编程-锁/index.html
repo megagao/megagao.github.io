@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>深入理解并行编程-锁 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="锁在过去几十年并发研究领域的出版物中，锁总是扮演着坏人的角色，锁背负的指控包括引起死锁、锁封护（luyang注：lock convoying，多个同优先级的线程重复竞争同一把锁，此时大量虽然被唤醒而得不到锁的线程被迫进行调度切换，这种频繁的调度切换相当影响系统性能）、饥饿、不公平、data races以及其他许多并发带来的罪孽。有趣的是，在共享内存并行软件中真正承担重担的是——你猜对了——锁。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解并行编程-锁">
+<meta property="og:url" content="http://realfond.cn/2016/03/28/深入理解并行编程-锁/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="锁在过去几十年并发研究领域的出版物中，锁总是扮演着坏人的角色，锁背负的指控包括引起死锁、锁封护（luyang注：lock convoying，多个同优先级的线程重复竞争同一把锁，此时大量虽然被唤醒而得不到锁的线程被迫进行调度切换，这种频繁的调度切换相当影响系统性能）、饥饿、不公平、data races以及其他许多并发带来的罪孽。有趣的是，在共享内存并行软件中真正承担重担的是——你猜对了——锁。">
+<meta property="og:image" content="http://ifeve.com/wp-content/uploads/2013/08/12.jpg">
+<meta property="og:image" content="http://ifeve.com/wp-content/uploads/2013/08/2.jpg">
+<meta property="og:image" content="http://ifeve.com/wp-content/uploads/2013/08/3.jpg">
+<meta property="og:updated_time" content="2016-04-04T14:32:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解并行编程-锁">
+<meta name="twitter:description" content="锁在过去几十年并发研究领域的出版物中，锁总是扮演着坏人的角色，锁背负的指控包括引起死锁、锁封护（luyang注：lock convoying，多个同优先级的线程重复竞争同一把锁，此时大量虽然被唤醒而得不到锁的线程被迫进行调度切换，这种频繁的调度切换相当影响系统性能）、饥饿、不公平、data races以及其他许多并发带来的罪孽。有趣的是，在共享内存并行软件中真正承担重担的是——你猜对了——锁。">
+<meta name="twitter:image" content="http://ifeve.com/wp-content/uploads/2013/08/12.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-深入理解并行编程-锁" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/03/28/深入理解并行编程-锁/" class="article-date">
+  	<time datetime="2016-03-28T14:07:46.000Z" itemprop="datePublished">2016-03-28</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深入理解并行编程-锁
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p>在过去几十年并发研究领域的出版物中，锁总是扮演着坏人的角色，锁背负的指控包括引起死锁、锁封护（luyang注：lock convoying，多个同优先级的线程重复竞争同一把锁，此时大量虽然被唤醒而得不到锁的线程被迫进行调度切换，这种频繁的调度切换相当影响系统性能）、饥饿、不公平、data races以及其他许多并发带来的罪孽。有趣的是，在共享内存并行软件中真正承担重担的是——你猜对了——锁。</p>
+<p><img src="http://ifeve.com/wp-content/uploads/2013/08/12.jpg" alt="锁：坏人还是懒汉？"></p>
+ <a id="more"></a>
+<p>图1.1：锁：坏人还是懒汉？</p>
+<p>这种截然不同的看法源于下面几个原因：</p>
+<ol>
+<li>很多因锁产生的问题大都有实用的解决办法，可以在大多数场合工作良好，比如<br>a) 使用锁层级避免死锁。<br>b) 死锁检测工具，比如Linux内核lockdep功能[Cor06]。<br>c) 对锁友好的数据结构，比如数组、哈希表、基数，第十一章将会讲述这些数据结构。</li>
+<li>有些锁的问题只有在竞争程度很高时才会出现，一般只有不良的设计才会让锁竞争如此激烈。</li>
+<li>有些锁的问题可以通过其他同步机制配合锁来避免。包括引用计数、统计计数、不阻塞的简单数据结构，还有RCU。</li>
+<li>在不久之前，几乎所有的共享内存并行程序都是闭源的，所以多数研究者很难知道业界的实践解决方案。</li>
+<li>所有美好的故事都需要一个坏人，锁在研究文献中扮演坏小子的角色已经有着悠久而光荣的历史了。</li>
+</ol>
+<p><img src="http://ifeve.com/wp-content/uploads/2013/08/2.jpg" alt="锁：驮马还是英雄？"></p>
+<p>图1.2：锁：驮马还是英雄？</p>
+<p>本章将给读者一个概述的认识，了解如何避免锁所带来的问题。</p>
+<h2 id="1-1-生存（staying-alive）"><a href="#1-1-生存（staying-alive）" class="headerlink" title="1.1. 生存（staying alive）"></a>1.1. 生存（staying alive）</h2><p>由于锁被控诉造成死锁和饥饿，因此对于共享内存并行程序的开发者来说，最重要的考虑之一是保持程序的运行。下面的章节将涵盖死锁、活锁、饥饿、不公平和低效率。</p>
+<p><strong>1.1.1. 死锁</strong></p>
+<p>死锁发生在一组线程持有至少一把锁时又等待该组线程中某个成员释放它持有的另一把锁时。</p>
+<p>如果缺乏外界干预，死锁会一直持续。除了持有锁的线程释放，没有线程可以获取到该锁，但是持有锁的线程在等待获取该锁的线程释放其他锁之前，又无法释放该锁。</p>
+<p><img src="http://ifeve.com/wp-content/uploads/2013/08/3.jpg" alt="死锁循环"></p>
+<p>图1.3：死锁循环</p>
+<p>我们可以用有向图来表示死锁，节点代表锁和线程，如图1.3所示。从锁指向线程的箭头表示线程持有了该锁，比如，线程B持有锁2和锁4。从线程到锁的箭头表示线程在等待这把锁，比如，线程B等待锁3释放。</p>
+<p>死锁场景必然包含至少一个以上的死锁循环。在图1.3中，死锁循环是线程B、锁3、线程C、锁4，然后又回到线程B。</p>
+<p>小问题1.1： 但是死锁的定义只说了每个线程持有至少一把锁，然后等待同样的线程释放持有的另一把锁。你怎么知道这里有一个循环？</p>
+<p>虽然有一些软件环境，比如数据库系统，可以修复已有的死锁，但是这种方法要么需要杀掉其中一个线程，要么强制从某个线程中偷走一把锁。杀线程和强制偷锁对于事务交易是可以的，但是对内核和应用程序这种层次的锁来说问题多多。</p>
+<p>因此，内核和应用程序需要避免死锁。避免死锁主要有三种方法，等级锁，条件锁，一次一把锁的设计。</p>
+<p>等级锁为锁编号，禁止乱序获取锁。在图1.3中我们可以用数字为锁编号，这样如果线程已经获取来编号相同或者更高的锁，就不允许再获取这把锁。线程B侵犯了锁的等级，因为它在持有锁4时又试图获取锁3，因此导致死锁的发生。</p>
+<p>再一次强调，使用等级锁要为锁编号，禁止乱序获取锁。在大型程序中，最好用工具来检查锁的等级[Cor06]。</p>
+<pre><code class="java">spin_lock(&amp;lock2);
+layer_2_processing(pkt);
+nextlayer = layer_1(pkt);
+spin_lock(&amp;nextlayer-&gt;lock1);
+layer_1_processing(pkt);
+spin_unlock(&amp;lock2);
+spin_unlock(&amp;nextlayer-&gt;lock1);
+</code></pre>
+<p>但是假设锁没有合理的等级。这在真实世界完全会发生，比如，在分层的网络协议栈中，报文流是双向的。当报文从一层发送到另一层时，锁完全有可能是被其他层持有的。考虑到报文可以在协议栈中上下传送，图1.4有一个死锁的秘诀。当报文在协议栈中从上往下发送时，必须逆序获取下一层的锁。而报文在协议栈中从下往上发送时，是按顺序获取锁，图1.4中第4行的获取锁操作将导致死锁。</p>
+<pre><code class="java">retry:
+spin_lock(&amp;lock2);
+layer_2_processing(pkt);
+nextlayer = layer_1(pkt);
+<span class="keyword">if</span> (!spin_trylock(&amp;nextlayer-&gt;lock1)) {
+spin_unlock(&amp;lock2);
+spin_lock(&amp;nextlayer-&gt;lock1);
+spin_lock((&amp;lock2);
+<span class="keyword">if</span> (layer_1(pkt) != nextlayer) {
+spin_unlock(&amp;nextlayer-&gt;lock1);
+spin_unlock((&amp;lock2);
+goto retry;
+}
+}
+layer_1_processing(pkt);
+spin_unlock(&amp;lock2);
+spin_unlock(&amp;nextlayer-&gt;lock1);
+</code></pre>
+<p>通过条件锁来避免死锁</p>
+<p>在本例中避免死锁的办法是强加一套锁的等级，但是在有需要时又可以有条件地乱序获取锁，如图1.5所示。与图1.4中无条件的获取层1的锁不同，第5行用spin_trylock()有条件地获取锁。该原语在锁可用时立即获取锁，在锁不可用时不获取锁，返回0。</p>
+<p>如果spin_trylock()成功，第15行进行层1的处理工作。否则，第6行释放锁，第7行和第8行用正确的顺序获取锁。不幸的是，系统中可能有多块网络设备（比如Ethernet和WiFi），这样layer_1()函数必须进行路由选择。这种选择随时都可能改变，特别是系统可移动时。所以第9行必须重新检查路由选择，如果发生改变，必须释放锁重新来过。</p>
+<p>小问题1.2： 图1.4到1.5的转变能否推广到其他场景？</p>
+<p>小问题1.3：为了避免死锁，图1.5带来的复杂性也是值得的吧？</p>
+<p>在某些情况下，避免锁嵌套是可以的，这样也就避免了死锁。但是，肯定还有一些手段，可以ensure that the needed data structures remain in existence during the time that neither lock is held。第1.3节讨论了其中一种手段，剩下的在第八章叙述。</p>
+<p><strong>1.1.2. 活锁</strong></p>
+<p>虽然条件锁是一种有效的避免死锁机制，但是有可能被滥用。看看图1.6中优美的对称例子吧。该例中的美遮掩了一个丑陋的活锁。为了发现它，考虑以下事件顺序：</p>
+<ol>
+<li>第4行线程1获取锁1，然后调用do_one_thing()。</li>
+<li>第18行线程2获取锁2，然后调用do_a_third_thing()。</li>
+<li>线程1试图获取锁2，由于线程2已经持有而失败。</li>
+<li>线程2试图获取锁1，由于线程1已经持有而失败。</li>
+<li>线程1释放锁1，然后跳转到retry。</li>
+<li>线程2释放锁2，然后跳转到retry。</li>
+<li>上述过程不断重复，活锁华丽登场。</li>
+</ol>
+<pre><code class="java"><span class="function"><span class="keyword">void</span> <span class="title">thread1</span><span class="params">(<span class="keyword">void</span>)</span>
+</span>{
+retry:
+spin_lock(&amp;lock1);
+do_one_thing();
+<span class="keyword">if</span> (!spin_trylock(&amp;lock2)) {
+spin_unlock(&amp;lock1);
+goto retry;
+}
+do_another_thing();
+spin_unlock(&amp;lock2);
+spin_unlock(&amp;lock1);
+}
+
+<span class="function"><span class="keyword">void</span> <span class="title">thread2</span><span class="params">(<span class="keyword">void</span>)</span>
+</span>{
+retry:
+spin_lock(&amp;lock2);
+do_a_third_thing();
+<span class="keyword">if</span> (!spin_trylock(&amp;lock1)) {
+spin_unlock(&amp;lock2);
+goto retry;
+}
+do_a_fourth_thing();
+spin_unlock(&amp;lock1);
+spin_unlock(&amp;lock2);
+}
+</code></pre>
+<p>滥用条件锁</p>
+<p>小问题1.4： 图1.6中的活锁该如何避免？</p>
+<p>饥饿与活锁十分类似。换句话说，活锁是饥饿的一种极端形式，所有线程都饥饿了。</p>
+<p><strong>1.1.3. 不公平</strong></p>
+<p>N/A</p>
+<p><strong>1.1.4. 低效率</strong></p>
+<p>N/A</p>
+<h2 id="1-2-锁的类型"><a href="#1-2-锁的类型" class="headerlink" title="1.2. 锁的类型"></a>1.2. 锁的类型</h2><p>锁有多少种类型，说出来一定让你大吃一惊，远超过本小节能描述的范围之外。下列章节讨论了互斥锁（第1.2.1节）、读写锁（第1.2.2节）和multi-role锁（第1.2.3节）。</p>
+<p><strong>1.2.1. 互斥锁</strong></p>
+<p>N/A</p>
+<p><strong>1.2.2. 读写锁</strong></p>
+<p>N/A</p>
+<p><strong>1.2.3. Beyond Reader-Writer Locks</strong></p>
+<p>VAXCluster六态锁。</p>
+<h2 id="1-3-基于锁的存在担保（existence-guarantee）"><a href="#1-3-基于锁的存在担保（existence-guarantee）" class="headerlink" title="1.3. 基于锁的存在担保（existence guarantee）"></a>1.3. 基于锁的存在担保（existence guarantee）</h2><p>并行编程中的一种关键挑战是提供存在担保（existence guarantee）[GKAS99]，这样才能正确解决这个问题：尝试删除一个对象的同时又有其他人尝试并发地访问该对象。存在担保对于数据元素被该元素中的锁或者引用计数保护这种情况极其有用。无法提供这种担保的代码容易埋藏隐含的竞态，如图1.7所示。</p>
+<pre><code class="java"><span class="function"><span class="keyword">int</span> <span class="title">delete</span><span class="params">(<span class="keyword">int</span> key)</span>
+</span>{
+<span class="keyword">int</span> b;
+struct element *p;
+
+b = hashfunction(key);
+p = hashtable[b];
+<span class="keyword">if</span> (p == NULL || p-&gt;key != key)
+<span class="keyword">return</span> <span class="number">0</span>;
+spin_lock(&amp;p-&gt;lock);
+hashtable[b] = NULL;
+spin_unlock(&amp;p-&gt;lock);
+kfree(p);
+<span class="keyword">return</span> <span class="number">1</span>;
+}
+</code></pre>
+<p>图1.7：没有存在担保的每数据元素锁</p>
+<p>小问题1.5： 如果图1.7第8行中我们想删除的元素不是列表中第一个元素怎么办？</p>
+<p>小问题1.6： 图1.7会出现什么竞态条件？</p>
+<pre><code class="java"><span class="function"><span class="keyword">int</span> <span class="title">delete</span><span class="params">(<span class="keyword">int</span> key)</span>
+</span>{
+<span class="keyword">int</span> b;
+struct element *p;
+spinlock_t *sp;
+
+b = hashfunction(key);
+sp = &amp;locktable[b];
+spin_lock(sp);
+p = hashtable[b];
+<span class="keyword">if</span> (p == NULL || p-&gt;key != key) {
+spin_unlock(sp);
+<span class="keyword">return</span> <span class="number">0</span>;
+}
+hashtable[b] = NULL;
+spin_unlock(sp);
+kfree(p);
+<span class="keyword">return</span> <span class="number">1</span>;
+}
+</code></pre>
+<p>带有基于锁的存在担保的每数据元素锁</p>
+<p>解决本例问题的办法是使用一个全局锁的哈希集合，这样每个哈希桶都有自己的锁，如图1.8所示。该方法允许在获取指向数据元素的指针（第10行）之前获取合适的锁（第9行）。虽然该方法在数据包含在单个可分割的数据结构比如图中所示的哈希表时工作的不错，但是如果有某个数据元素可以是多个哈希表的成员，或者更复杂的数据结构比如树和图时，就会有问题了。这些问题还是可以解决的，事实上，这些解决办法组成来基于锁的软件事务性内存实现。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/04/Java Socket实战之 传输对象/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Java Socket实战之 传输对象
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/03/25/Hadoop-Yarn-HA高可靠性集群搭建（Hadoop—-Zookeeper）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hadoop Yarn HA高可靠性集群搭建（Hadoop+Zookeeper）</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="深入理解并行编程-锁" data-title="深入理解并行编程-锁" data-url="http://realfond.cn/2016/03/28/深入理解并行编程-锁/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>

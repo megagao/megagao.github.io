@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>并发编程的挑战 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近研读了方腾飞老师的《Java并发编程的艺术》这本书，收获非常大，激励推荐一下。这篇文章依据方老师的书，介绍一下并发编程的挑战和对应的解决方案，以及我自己的一些感悟。
+并发编程的目的是为了让程序能够更快地执行，但是，并不是启动更多的线程就能让程序最大限度地并发。如果我们希望通过多线程编程来提高程序运行效率，会面临许多的挑战，比如上下文的切换问题、死锁、以及软硬件的限制。
+1.1上下文切换即使是单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发编程的挑战">
+<meta property="og:url" content="http://realfond.cn/2016/04/20/并发编程的挑战/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="最近研读了方腾飞老师的《Java并发编程的艺术》这本书，收获非常大，激励推荐一下。这篇文章依据方老师的书，介绍一下并发编程的挑战和对应的解决方案，以及我自己的一些感悟。
+并发编程的目的是为了让程序能够更快地执行，但是，并不是启动更多的线程就能让程序最大限度地并发。如果我们希望通过多线程编程来提高程序运行效率，会面临许多的挑战，比如上下文的切换问题、死锁、以及软硬件的限制。
+1.1上下文切换即使是单">
+<meta property="og:updated_time" content="2016-05-06T09:05:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="并发编程的挑战">
+<meta name="twitter:description" content="最近研读了方腾飞老师的《Java并发编程的艺术》这本书，收获非常大，激励推荐一下。这篇文章依据方老师的书，介绍一下并发编程的挑战和对应的解决方案，以及我自己的一些感悟。
+并发编程的目的是为了让程序能够更快地执行，但是，并不是启动更多的线程就能让程序最大限度地并发。如果我们希望通过多线程编程来提高程序运行效率，会面临许多的挑战，比如上下文的切换问题、死锁、以及软硬件的限制。
+1.1上下文切换即使是单">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-并发编程的挑战" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/20/并发编程的挑战/" class="article-date">
+  	<time datetime="2016-04-20T14:05:08.000Z" itemprop="datePublished">2016-04-20</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      并发编程的挑战
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近研读了方腾飞老师的《Java并发编程的艺术》这本书，收获非常大，激励推荐一下。这篇文章依据方老师的书，介绍一下并发编程的挑战和对应的解决方案，以及我自己的一些感悟。</p>
+<p>并发编程的目的是为了让程序能够更快地执行，但是，并不是启动更多的线程就能让程序最大限度地并发。如果我们希望通过多线程编程来提高程序运行效率，会面临许多的挑战，比如上下文的切换问题、死锁、以及软硬件的限制。</p>
+<h1 id="1-1上下文切换"><a href="#1-1上下文切换" class="headerlink" title="1.1上下文切换"></a>1.1上下文切换</h1><p>即使是单核处理器也支持多线程执行代码，CPU通过给每个线程分配CPU时间片来实现这个机制。时间片是CPU分配给各个线程的时间，因为时间片非常短，所以CPU通过不停的切换线程执行，让我们感觉多个线程是同时执行的，时间片一般是几十毫秒（ms）。</p>
+<p>CPU通过时间片分配算法来循环执行任务，当前任务执行一个时间片后会切换到下个任务，但是在切换前会保存上一个任务的状态，以便下次切换回这个任务时，可以再加载这个任务的状态。所以任务的保存到再加载的过程就是一次上下文切换。</p>
+<p>就像我们同时在读两本书，比如当我们在读一本英文的技术书时，发现某个单词不认识，于是便打开中英文字典，但是在放下英文技术书之前，大脑必需首先记住这本书读到了多少页的第多少行，等查完单词之后，能够继续读这本书，这样的切换是会影响读书效率的，同样上下文切换也会影响到多线程的执行速度。</p>
+<h2 id="1-1-1-多线程一定快吗？"><a href="#1-1-1-多线程一定快吗？" class="headerlink" title="1.1.1    多线程一定快吗？"></a>1.1.1    多线程一定快吗？</h2><p>下面的代码演示串行和并发执行累加操作的时间，请思考下面的代码并发执行一定比串行执行快些吗？  <a id="more"></a></p>
+<pre><code class="java"><span class="keyword">package</span> chapter01;
+
+<span class="comment">/**
+ * 并发和单线程执行测试
+ * <span class="doctag">@author</span> tengfei.fangtf
+ * <span class="doctag">@version</span> $Id: ConcurrencyTest.java, v 0.1 2014-7-18 下午10:03:31 tengfei.fangtf Exp $
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcurrencyTest</span> </span>{
+<span class="number">09</span>
+
+    <span class="comment">/** 执行次数 */</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> count = <span class="number">10000l</span>;
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>{
+        <span class="comment">//并发计算</span>
+        concurrency();
+        <span class="comment">//单线程计算</span>
+        serial();
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">concurrency</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>{
+        <span class="keyword">long</span> start = System.currentTimeMillis();
+        Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() {
+            <span class="meta">@Override</span>
+            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+                <span class="keyword">int</span> a = <span class="number">0</span>;
+                <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; count; i++) {
+                    a += <span class="number">5</span>;
+                }
+                System.out.println(a);
+            }
+        });
+        thread.start();
+        <span class="keyword">int</span> b = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; count; i++) {
+            b--;
+        }
+        <span class="keyword">long</span> time = System.currentTimeMillis() - start;
+        thread.join();
+        System.out.println(<span class="string">"concurrency :"</span> + time + <span class="string">"ms,b="</span> + b);
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serial</span><span class="params">()</span> </span>{
+        <span class="keyword">long</span> start = System.currentTimeMillis();
+        <span class="keyword">int</span> a = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; count; i++) {
+            a += <span class="number">5</span>;
+        }
+        <span class="keyword">int</span> b = <span class="number">0</span>;
+        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; count; i++) {
+            b--;
+        }
+        <span class="keyword">long</span> time = System.currentTimeMillis() - start;
+        System.out.println(<span class="string">"serial:"</span> + time + <span class="string">"ms,b="</span> + b + <span class="string">",a="</span> + a);
+    }
+}
+</code></pre>
+<p>答案是不一定，测试结果如表1-1所示：<table> <tr> <td>循环次数</td> <td>串行执行耗时（单位ms）</td> <td>并发执行耗时</td> <td>并发比串行快多少</td> </tr> <tr> <td>1亿</td> <td>130</td><td>77</td> <td>约1倍</td> </tr> <tr> <td>1千万</td>    <td>18</td> <td>9</td> <td>约1倍</td> </tr> <tr> <td>1百万</td> <td>5</td> <td>5</td> <td>差不多</td> </tr> <tr> <td>10万</td> <td>4</td> <td>3</td> <td>慢</td> </tr> <tr> <td>1万</td> <td>0</td> <td>1</td> <td>慢</td> </tr> </table><br>从表1-1可以发现当并发执行累加操作不超过百万次时，速度会比串行执行累加操作要慢。那么为什么并发执行的速度还比串行慢呢？因为线程有创建和上下文切换的开销。</p>
+<h2 id="1-1-2-测试上下文切换次数和时长"><a href="#1-1-2-测试上下文切换次数和时长" class="headerlink" title="1.1.2    测试上下文切换次数和时长"></a>1.1.2    测试上下文切换次数和时长</h2><p>下面我们来看看有什么工具可以度量上下文切换带来的消耗。</p>
+<p>使用Lmbench3[1]可以测量上下文切换的时长。<br>使用vmstat可以测量上下文切换的次数。<br>下面是利用vmstat测量上下文切换次数的示例。</p>
+<pre><code>01    $ vmstat 1
+02 
+03    procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu-----
+04 
+05    r b   swpd   free   buff cache   si   so   bi   bo   in   cs us sy id wa st
+06 
+07    0 0     0 127876 398928 2297092   0   0     0     4   2   2 0 0 99 0 0
+08     
+09    0 0     0 127868 398928 2297092   0   0     0     0 595 1171 0 1 99 0 0
+10     
+11    0 0     0 127868 398928 2297092   0   0     0     0 590 1180 1 0 100 0 0
+12 
+13    0 0     0 127868 398928 2297092   0   0     0     0 567 1135 0 1 99 0 0
+</code></pre><p>CS（Content Switch）表示上下文切换的次数，从上面的测试结果中，我们可以看到其中上下文的每一秒钟切换1000多次。</p>
+<h2 id="1-1-3-如何减少上下文切换"><a href="#1-1-3-如何减少上下文切换" class="headerlink" title="1.1.3    如何减少上下文切换"></a>1.1.3    如何减少上下文切换</h2><p>减少上下文切换的方法有无锁并发编程、CAS算法、单线程编程和使用协程。</p>
+<p>无锁并发编程。多线程竞争锁时，会引起上下文切换，所以多线程处理数据时，可以用一些办法来避免使用锁，如将数据用ID进行Hash算法后分段，不同的线程处理不同段的数据。<br>CAS算法。Java的Atomic包使用CAS算法来更新数据，而不需要加锁。<br>使用最少线程。避免创建不需要的线程，比如任务很少，但是创建了很多线程来处理，这样会造成大量线程都处于等待状态。<br>协程：在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换。</p>
+<h2 id="1-1-4-减少上下文切换实战"><a href="#1-1-4-减少上下文切换实战" class="headerlink" title="1.1.4    减少上下文切换实战"></a>1.1.4    减少上下文切换实战</h2><p>本节描述通过减少线上大量WAITING的线程，来减少上下文切换次数。</p>
+<p>第一步：用jstack命令 dump线程信息，看看pid是3117进程里的线程都在做什么。</p>
+<pre><code>sudo -u admin /opt/ifeve/java/bin/jstack 31177 &amp;gt; /home/tengfei.fangtf/dump17
+</code></pre><p>第二步：统计下所有线程分别处于什么状态，发现300多个线程处于WAITING(onobjectmonitor)状态。</p>
+<pre><code>[tengfei.fangtf@ifeve ~]$ grep java.lang.Thread.State dump17 | awk &apos;{print $2$3$4$5}&apos; | sort | uniq -c
+39 RUNNABLE
+21 TIMED_WAITING(onobjectmonitor)
+6 TIMED_WAITING(parking)
+51 TIMED_WAITING(sleeping)
+305 WAITING(onobjectmonitor)
+3 WAITING(parking)
+</code></pre><p>第三步：打开dump文件查看处于WAITING(onobjectmonitor)的线程在做什么。发现这些线程基本全是JBOSS的工作线程在await。说明JBOSS线程池里线程接收到的任务太少，大量线程都闲着。</p>
+<pre><code>&quot;http-0.0.0.0-7001-97&quot; daemon prio=10 tid=0x000000004f6a8000 nid=0x555e in Object.wait() [0x0000000052423000]
+ java.lang.Thread.State: WAITING (on object monitor)
+ at java.lang.Object.wait(Native Method)
+ - waiting on &lt;0x00000007969b2280&gt; (a org.apache.tomcat.util.net.AprEndpoint$Worker)
+ at java.lang.Object.wait(Object.java:485)
+ at org.apache.tomcat.util.net.AprEndpoint$Worker.await(AprEndpoint.java:1464)
+ - locked &lt;0x00000007969b2280&gt; (a org.apache.tomcat.util.net.AprEndpoint$Worker)
+ at org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1489)
+ at java.lang.Thread.run(Thread.java:662)
+</code></pre><p>第四步：减少JBOSS的工作线程数，找到JBOSS的线程池配置信息，将maxThreads降低到100。</p>
+<pre><code>&lt;maxThreads=&quot;250&quot; maxHttpHeaderSize=&quot;8192&quot;
+emptySessionPath=&quot;false&quot; minSpareThreads=&quot;40&quot; maxSpareThreads=&quot;75&quot; maxPostSize=&quot;512000&quot; protocol=&quot;HTTP/1.1&quot;
+enableLookups=&quot;false&quot; redirectPort=&quot;8443&quot; acceptCount=&quot;200&quot; bufferSize=&quot;16384&quot;
+connectionTimeout=&quot;15000&quot; disableUploadTimeout=&quot;false&quot; useBodyEncodingForURI=&quot;true&quot;&gt;
+</code></pre><p>第五步：重启JBOSS，再dump线程信息，然后再统计WAITING(onobjectmonitor)的线程，发现减少了175。WAITING的线程少了，系统上下文切换的次数就会少，因为从WAITTING到RUNNABLE会进行一次上下文的切换。读者也可以使用vmstat命令测试下。</p>
+<pre><code>[tengfei.fangtf@ifeve ~]$ grep java.lang.Thread.State dump17 | awk &apos;{print $2$3$4$5}&apos; | sort | uniq -c
+44 RUNNABLE
+22 TIMED_WAITING(onobjectmonitor)
+9 TIMED_WAITING(parking)
+36 TIMED_WAITING(sleeping)
+130 WAITING(onobjectmonitor)
+1 WAITING(parking)
+</code></pre><h1 id="1-2-死锁"><a href="#1-2-死锁" class="headerlink" title="1.2 死锁"></a>1.2 死锁</h1><p>锁是个非常有用的工具，运用场景非常多，因为其使用起来非常简单，而且易于理解。但同时它也会带来一些困扰，那就是可能会引起死锁，一旦产生死锁，会造成系统功能不可用。让我们先来看一段代码，这段代码会引起死锁，线程t1和t2互相等待对方释放锁。</p>
+<pre><code class="java"><span class="keyword">package</span> chapter01;
+
+<span class="comment">/**
+ * 死锁例子
+ *
+ * <span class="doctag">@author</span> tengfei.fangtf
+ * <span class="doctag">@version</span> $Id: DeadLockDemo.java, v 0.1 2015-7-18 下午10:08:28 tengfei.fangtf Exp $
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>{
+
+    <span class="comment">/** A锁 */</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> String A = <span class="string">"A"</span>;
+    <span class="comment">/** B锁 */</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> String B = <span class="string">"B"</span>;
+
+    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>{
+        <span class="keyword">new</span> DeadLockDemo().deadLock();
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">deadLock</span><span class="params">()</span> </span>{
+        Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() {
+            <span class="meta">@Override</span>
+            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+                <span class="keyword">synchronized</span> (A) {
+                    <span class="keyword">try</span> {
+                        Thread.sleep(<span class="number">2000</span>);
+                    } <span class="keyword">catch</span> (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    <span class="keyword">synchronized</span> (B) {
+                        System.out.println(<span class="string">"1"</span>);
+                    }
+                }
+            }
+        });
+
+        Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() {
+            <span class="meta">@Override</span>
+            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+                <span class="keyword">synchronized</span> (B) {
+                    <span class="keyword">synchronized</span> (A) {
+                        System.out.println(<span class="string">"2"</span>);
+                    }
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+    }
+
+}
+</code></pre>
+<p>这段代码只是演示死锁的场景，在现实中你可能很难会写出这样的代码。但是一些更为复杂的场景中你可能会遇到这样的问题，比如t1拿到锁之后，因为一些异常情况没有释放锁，比如死循环。又或者是t1拿到一个数据库锁，释放锁的时候抛了异常，没释放掉。</p>
+<p>一旦出现死锁，业务是可感知的，因为不能继续提供服务了，那么只能通过dump线程看看到底是哪个线程出现了问题，以下线程信息告诉我们是DeadLockDemo类的42行和31号引起的死锁：</p>
+<p>01<br>“Thread-2” prio=5 tid=7fc0458d1000 nid=0x116c1c000 waiting for monitor entry [116c1b000]<br>02<br>   java.lang.Thread.State: BLOCKED (on object monitor)<br>03<br>        at com.ifeve.book.forkjoin.DeadLockDemo$2.run(DeadLockDemo.java:42)<br>04</p>
+<pre><code>- waiting to lock &lt;7fb2f3ec0&gt; (a java.lang.String)
+</code></pre><p>05</p>
+<pre><code>- locked &lt;7fb2f3ef8&gt; (a java.lang.String)
+</code></pre><p>06<br>        at java.lang.Thread.run(Thread.java:695)<br>07</p>
+<p>08<br>“Thread-1” prio=5 tid=7fc0430f6800 nid=0x116b19000 waiting for monitor entry [116b18000]<br>09<br>   java.lang.Thread.State: BLOCKED (on object monitor)<br>10<br>        at com.ifeve.book.forkjoin.DeadLockDemo$1.run(DeadLockDemo.java:31)<br>11</p>
+<pre><code>- waiting to lock &lt;7fb2f3ef8&gt; (a java.lang.String)
+</code></pre><p>12</p>
+<pre><code>- locked &lt;7fb2f3ec0&gt; (a java.lang.String)
+</code></pre><p>13<br>        at java.lang.Thread.run(Thread.java:695)<br>现在我们介绍下如何避免死锁的几个常见方法。</p>
+<p>避免一个线程同时获取多个锁。<br>避免一个线程在锁内同时占用多个资源，尽量保证每个锁只占用一个资源。<br>尝试使用定时锁，使用tryLock(timeout)来替代使用内部锁机制。<br>对于数据库锁，加锁和解锁必须在一个数据库连接里，否则会出现解锁失败。</p>
+<h1 id="1-3-资源限制的挑战"><a href="#1-3-资源限制的挑战" class="headerlink" title="1.3 资源限制的挑战"></a>1.3 资源限制的挑战</h1><p>（1）什么是资源限制？</p>
+<p>资源限制是指在进行并发编程时，程序的执行速度受限于计算机硬件资源或软件资源的限制。比如服务器的带宽只有2M，某个资源的下载速度是1M每秒，系统启动十个线程下载资源，下载速度不会变成10M每秒，所以在进行并发编程时，要考虑到这些资源的限制。硬件资源限制有带宽的上传下载速度，硬盘读写速度和CPU的处理速度。软件资源限制有数据库的连接数和Sorket连接数等。</p>
+<p>（2）资源限制引发的问题</p>
+<p>并发编程将代码执行速度加速的原则是将代码中串行执行的部分变成并发执行，但是如果某段串行的代码并发执行，但是因为受限于资源的限制，仍然在串行执行，这时候程序不仅不会执行加快，反而会更慢，因为增加了上下文切换和资源调度的时间。例如，之前看到一段程序使用多线程在办公网并发的下载和处理数据时，导致CPU利用率100％，任务几个小时都不能运行完成，后来修改成单线程，一个小时就执行完成了。</p>
+<p>（3）如何解决资源限制的问题？</p>
+<p>对于硬件资源限制，可以考虑使用集群并行执行程序，既然单机的资源有限制，那么就让程序在多机上运行，比如使用ODPS，hadoop或者自己搭建服务器集群，不同的机器处理不同的数据，比如将数据ID％机器数，得到一个机器编号，然后由对应编号的机器处理这笔数据。</p>
+<p>对于软件资源限制，可以考虑使用资源池将资源复用，比如使用连接池将数据库和Sorket连接复用，或者调用对方webservice接口获取数据时，只建立一个连接。</p>
+<p>（4）在资源限制情况下进行并发编程</p>
+<p>那么如何在资源限制的情况下，让程序执行的更快呢？根据不同的资源限制调整程序的并发度，比如下载文件程序依赖于两个资源，带宽和硬盘读写速度。有数据库操作时，要数据库连接数，如果SQL语句执行非常快，而线程的数量比数据库连接数大很多，则某些线程会被阻塞住，等待数据库连接。</p>
+<h1 id="1-4-本章小结"><a href="#1-4-本章小结" class="headerlink" title="1.4 本章小结"></a>1.4 本章小结</h1><p>本章介绍了在进行并发编程的时候，大家可能会遇到的几个挑战，并给出了一些解决建议。有的并发程序写的不严谨，在并发下如果出现问题，定位起来会比较耗时和棘手。所以对于Java开发工程师，笔者强烈建议多使用JDK并发包提供的并发容器和工具类来帮你解决并发问题，因为这些类都已经通过了充分的测试和优化，解决了本章提到的几个挑战。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/26/2016移动互联网时代的社交媒体营销高峰论坛/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          2016移动互联网时代的社交媒体营销高峰论坛
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/09/Android 蓝牙4.0 BLE 理解/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android 蓝牙4.0 BLE 理解</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="并发编程的挑战" data-title="并发编程的挑战" data-url="http://realfond.cn/2016/04/20/并发编程的挑战/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>

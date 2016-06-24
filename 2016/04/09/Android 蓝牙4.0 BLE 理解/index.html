@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>Android 蓝牙4.0 BLE 理解 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="实验用的基站已经到了，为了进行定位算法精确度实验，需要开发安卓的程序来接收BLE基站的功率值并与服务器进行通信，因此，最近的主要精力都放在了安卓的ble模块上面，今天来分享一些关于Android蓝牙4.0 BLE的内容。
+本文简单结合两篇文章
+http://blog.csdn.net/hellogv/article/details/24267685
+http://blog.csdn.net/jim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 蓝牙4.0 BLE 理解">
+<meta property="og:url" content="http://realfond.cn/2016/04/09/Android 蓝牙4.0 BLE 理解/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="实验用的基站已经到了，为了进行定位算法精确度实验，需要开发安卓的程序来接收BLE基站的功率值并与服务器进行通信，因此，最近的主要精力都放在了安卓的ble模块上面，今天来分享一些关于Android蓝牙4.0 BLE的内容。
+本文简单结合两篇文章
+http://blog.csdn.net/hellogv/article/details/24267685
+http://blog.csdn.net/jim">
+<meta property="og:updated_time" content="2016-04-12T10:21:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 蓝牙4.0 BLE 理解">
+<meta name="twitter:description" content="实验用的基站已经到了，为了进行定位算法精确度实验，需要开发安卓的程序来接收BLE基站的功率值并与服务器进行通信，因此，最近的主要精力都放在了安卓的ble模块上面，今天来分享一些关于Android蓝牙4.0 BLE的内容。
+本文简单结合两篇文章
+http://blog.csdn.net/hellogv/article/details/24267685
+http://blog.csdn.net/jim">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="zhihu" target="_blank" href="https://www.zhihu.com/people/megagao" title="zhihu">zhihu</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-Android 蓝牙4.0 BLE 理解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/09/Android 蓝牙4.0 BLE 理解/" class="article-date">
+  	<time datetime="2016-04-09T10:32:57.000Z" itemprop="datePublished">2016-04-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 蓝牙4.0 BLE 理解
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实验用的基站已经到了，为了进行定位算法精确度实验，需要开发安卓的程序来接收BLE基站的功率值并与服务器进行通信，因此，最近的主要精力都放在了安卓的ble模块上面，今天来分享一些关于Android蓝牙4.0 BLE的内容。</p>
+<p>本文简单结合两篇文章</p>
+<p><a href="http://blog.csdn.net/hellogv/article/details/24267685" target="_blank" rel="external">http://blog.csdn.net/hellogv/article/details/24267685</a></p>
+<p><a href="http://blog.csdn.net/jimoduwu/article/details/21604215" target="_blank" rel="external">http://blog.csdn.net/jimoduwu/article/details/21604215</a></p>
+<p>在BLE协议中，有两个角色，周边（Periphery）和中央（Central），一个中央可以同时连接多个周边，但是一个周边某一时刻只能连接一个中央。但是不管是Periphery还是Central都是可以实现 GATT server 和 GATT client去传输数据，但是无法同时都是。</p>
+<p>大概了解了概念后，看看Android BLE SDK的四个关键类（class）：</p>
+<p>a) BluetoothGattServer作为周边来提供数据；BluetoothGattServerCallback返回周边的状态。</p>
+<p>b) BluetoothGatt作为中央来使用和处理数据；BluetoothGattCallback返回中央的状态和周边提供的数据。</p>
+<p>因为我们讨论的是Android的BLE SDK，下面所有的BluetoothGattServer代表周边，BluetoothGatt代表中央。</p>
+<a id="more"></a>
+<p>一.创建一个周边（虽然目前周边API在Android手机上不工作，但还是看看）</p>
+<p> a）先看看周边用到的class，蓝色椭圆</p>
+<p>b）说明：</p>
+<p>每一个周边BluetoothGattServer，包含多个服务Service，每一个Service包含多个特征Characteristic。</p>
+<p>1.new一个特征：character = new BluetoothGattCharacteristic(<br>UUID.fromString(characteristicUUID),<br>BluetoothGattCharacteristic.PROPERTY_NOTIFY,<br>BluetoothGattCharacteristic.PERMISSION_READ);</p>
+<p>2.new一个服务：service = new BluetoothGattService(UUID.fromString(serviceUUID),<br>BluetoothGattService.SERVICE_TYPE_PRIMARY);</p>
+<p>3.把特征添加到服务：service.addCharacteristic(character);</p>
+<p>4.获取BluetoothManager：manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);</p>
+<p>5.获取/打开周边：BluetoothGattServer server = manager.openGattServer(this,<br>new BluetoothGattServerCallback(){…}); </p>
+<p>6.把service添加到周边：server.addService(service);</p>
+<p>7.开始广播service：Google还没有广播Service的API，等吧！！！！！所以目前我们还不能让一个Android手机作为周边来提供数据。</p>
+<p>二.创建一个中央（这次不会让你失望，可以成功创建并且连接到周边的）</p>
+<p>a）先看看中央用到的class，蓝色椭圆</p>
+<p>b）说明：</p>
+<p>为了拿到中央BluetoothGatt，可要爬山涉水十八弯：</p>
+<p>1.先拿到BluetoothManager：bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);</p>
+<p>2.再拿到BluetoothAdapt：btAdapter = bluetoothManager.getAdapter();</p>
+<p>3.开始扫描：btAdapter.startLeScan( BluetoothAdapter.LeScanCallback);</p>
+<p>4.从LeScanCallback中得到BluetoothDevice：public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {…..}</p>
+<p>5.用BluetoothDevice得到BluetoothGatt：gatt = device.connectGatt(this, true, gattCallback);</p>
+<p>终于拿到中央BluetoothGatt了，它有一堆方法（查API吧），调用这些方法，你就可以通过BluetoothGattCallback和周边BluetoothGattServer交互了。<br>官方有给出BLE 通信的sample ，下面是牛人简化了代码，简化得简单明了</p>
+<p>本文来自<a href="http://blog.csdn.net/hellogv/" target="_blank" rel="external">http://blog.csdn.net/hellogv/</a> ，引用必须注明出处！</p>
+<p>最近穿戴设备发展得很火，把相关技术也带旺了，其中一项是BLE（Bluetooth Low Energy）。BLE是蓝牙4.0的核心Profile，主打功能是快速搜索，快速连接，超低功耗保持连接和传输数据，弱点是数据传输速率低，由于BLE的低功耗特点，因此普遍用于穿戴设备。Android 4.3才开始支持BLE API，所以请各位客官把本文代码运行在蓝牙4.0和Android 4.3及其以上的系统，另外本文所用的BLE终端是一个蓝牙4.0的串口蓝牙模块。</p>
+<p>PS：我的i9100刷了4.4系统后，竟然也能跟BLE蓝牙模块通信。</p>
+<p>BLE分为三部分Service、Characteristic、Descriptor，这三部分都由UUID作为唯一标示符。一个蓝牙4.0的终端可以包含多个Service，一个Service可以包含多个Characteristic，一个Characteristic包含一个Value和多个Descriptor，一个Descriptor包含一个Value。一般来说，Characteristic是手机与BLE终端交换数据的关键，Characteristic有较多的跟权限相关的字段，例如PERMISSION和PROPERTY，而其中最常用的是PROPERTY，本文所用的BLE蓝牙模块竟然没有标准的Characteristic的PERMISSION。Characteristic的PROPERTY可以通过位运算符组合来设置读写属性，例如READ|WRITE、READ|WRITE_NO_RESPONSE|NOTIFY，因此读取PROPERTY后要分解成所用的组合（本文代码已含此分解方法）。</p>
+<p>本文代码改自Android 4.3 Sample的BluetoothLeGatt，把冗余代码去掉，获取的BLE设备信息都通过Log，还有一些必要的读写蓝牙方法，应该算是简化到大家一看就可以懂了。本文代码可以到<a href="http://download.csdn.net/detail/hellogv/7228819下载。接下来贴出本文运行的结果，首先是连接BLE设备后，枚举出设备所有Service、Characteristic、Descriptor，并且手机会往Characteristic" target="_blank" rel="external">http://download.csdn.net/detail/hellogv/7228819下载。接下来贴出本文运行的结果，首先是连接BLE设备后，枚举出设备所有Service、Characteristic、Descriptor，并且手机会往Characteristic</a> uuid=0000ffe1-0000-1000-8000-00805f9b34fb写入“send data-&gt;”字符串，BLE终端收到数据通过串口传到PC串口助手（见PC串口助手的截图）：</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): –&gt;service type:PRIMARY</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): –&gt;includedServices size:0</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): –&gt;service uuid:00001800-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a00-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): —-&gt;char property:READ</p>
+<p>04-21 18:28:25.465: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a01-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char property:READ</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a02-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char property:READ|WRITE|</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a03-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.470: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): —-&gt;char property:READ|WRITE|</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a04-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): —-&gt;char property:READ</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): –&gt;service type:PRIMARY</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): –&gt;includedServices size:0</p>
+<p>04-21 18:28:25.475: E/DeviceScanActivity(12254): –&gt;service uuid:00001801-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char uuid:00002a05-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char property:INDICATE</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): ——–&gt;desc uuid:00002902-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): ——–&gt;desc permission:UNKNOW</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): –&gt;service type:PRIMARY</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): –&gt;includedServices size:0</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): –&gt;service uuid:0000ffe0-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char uuid:0000ffe1-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char permission:UNKNOW</p>
+<p>04-21 18:28:25.480: E/DeviceScanActivity(12254): —-&gt;char property:READ|WRITE_NO_RESPONSE|NOTIFY|</p>
+<p>04-21 18:28:25.490: E/DeviceScanActivity(12254): ——–&gt;desc uuid:00002902-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.490: E/DeviceScanActivity(12254): ——–&gt;desc permission:UNKNOW</p>
+<p>04-21 18:28:25.490: E/DeviceScanActivity(12254): ——–&gt;desc uuid:00002901-0000-1000-8000-00805f9b34fb</p>
+<p>04-21 18:28:25.490: E/DeviceScanActivity(12254): ——–&gt;desc permission:UNKNOW</p>
+<p>04-21 18:28:26.025: E/DeviceScanActivity(12254): onCharRead BLE DEVICE read 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; 00</p>
+<p>这里红字是由BluetoothGattCallback的onCharacteristicRead()回调而打出Log</p>
+<p>以下Log是PC上的串口工具通过BLE模块发送过来，由BluetoothGattCallback的 onCharacteristicChanged（）打出Log</p>
+<p>04-21 18:30:18.260: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:18.745: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:19.085: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:19.350: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:19.605: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:19.835: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:20.055: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:20.320: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:20.510: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:20.735: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>04-21 18:30:21.000: E/DeviceScanActivity(12254): onCharWrite BLE DEVICE write 0000ffe1-0000-1000-8000-00805f9b34fb -&gt; send data to phone</p>
+<p>接下来贴出本文核心代码：</p>
+<p>[java] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<pre><code>public class DeviceScanActivity extends ListActivity {  
+    private final static String TAG = DeviceScanActivity.class.getSimpleName();  
+    private final static String UUID_KEY_DATA = &quot;0000ffe1-0000-1000-8000-00805f9b34fb&quot;;  
+
+    private LeDeviceListAdapter mLeDeviceListAdapter;  
+    /**搜索BLE终端*/  
+    private BluetoothAdapter mBluetoothAdapter;  
+    /**读写BLE终端*/  
+    private BluetoothLeClass mBLE;  
+    private boolean mScanning;  
+    private Handler mHandler;  
+
+    // Stops scanning after 10 seconds.  
+    private static final long SCAN_PERIOD = 10000;  
+
+    @Override  
+    public void onCreate(Bundle savedInstanceState) {  
+        super.onCreate(savedInstanceState);  
+        getActionBar().setTitle(R.string.title_devices);  
+        mHandler = new Handler();  
+
+        // Use this check to determine whether BLE is supported on the device.  Then you can  
+        // selectively disable BLE-related features.  
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {  
+            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();  
+            finish();  
+        }  
+
+        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to  
+        // BluetoothAdapter through BluetoothManager.  
+        final BluetoothManager bluetoothManager =  
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);  
+        mBluetoothAdapter = bluetoothManager.getAdapter();  
+
+        // Checks if Bluetooth is supported on the device.  
+        if (mBluetoothAdapter == null) {  
+            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();  
+            finish();  
+            return;  
+        }  
+        //开启蓝牙  
+        mBluetoothAdapter.enable();  
+
+        mBLE = new BluetoothLeClass(this);  
+        if (!mBLE.initialize()) {  
+            Log.e(TAG, &quot;Unable to initialize Bluetooth&quot;);  
+            finish();  
+        }  
+        //发现BLE终端的Service时回调  
+        mBLE.setOnServiceDiscoverListener(mOnServiceDiscover);  
+        //收到BLE终端数据交互的事件  
+        mBLE.setOnDataAvailableListener(mOnDataAvailable);  
+    }  
+
+
+    @Override  
+    protected void onResume() {  
+        super.onResume();  
+
+        // Initializes list view adapter.  
+        mLeDeviceListAdapter = new LeDeviceListAdapter(this);  
+        setListAdapter(mLeDeviceListAdapter);  
+        scanLeDevice(true);  
+    }  
+
+    @Override  
+    protected void onPause() {  
+        super.onPause();  
+        scanLeDevice(false);  
+        mLeDeviceListAdapter.clear();  
+        mBLE.disconnect();  
+    }  
+
+    @Override  
+    protected void onStop() {  
+        super.onStop();  
+        mBLE.close();  
+    }  
+
+    @Override  
+    protected void onListItemClick(ListView l, View v, int position, long id) {  
+        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);  
+        if (device == null) return;  
+        if (mScanning) {  
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);  
+            mScanning = false;  
+        }  
+
+        mBLE.connect(device.getAddress());  
+    }  
+
+    private void scanLeDevice(final boolean enable) {  
+        if (enable) {  
+            // Stops scanning after a pre-defined scan period.  
+            mHandler.postDelayed(new Runnable() {  
+                @Override  
+                public void run() {  
+                    mScanning = false;  
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);  
+                    invalidateOptionsMenu();  
+                }  
+            }, SCAN_PERIOD);  
+
+            mScanning = true;  
+            mBluetoothAdapter.startLeScan(mLeScanCallback);  
+        } else {  
+            mScanning = false;  
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);  
+        }  
+        invalidateOptionsMenu();  
+    }  
+
+    /** 
+     * 搜索到BLE终端服务的事件 
+     */  
+    private BluetoothLeClass.OnServiceDiscoverListener mOnServiceDiscover = new OnServiceDiscoverListener(){  
+
+        @Override  
+        public void onServiceDiscover(BluetoothGatt gatt) {  
+            displayGattServices(mBLE.getSupportedGattServices());  
+        }  
+
+    };  
+
+    /** 
+     * 收到BLE终端数据交互的事件 
+     */  
+    private BluetoothLeClass.OnDataAvailableListener mOnDataAvailable = new OnDataAvailableListener(){  
+
+        /** 
+         * BLE终端数据被读的事件 
+         */  
+        @Override  
+        public void onCharacteristicRead(BluetoothGatt gatt,  
+                BluetoothGattCharacteristic characteristic, int status) {  
+            if (status == BluetoothGatt.GATT_SUCCESS)   
+                Log.e(TAG,&quot;onCharRead &quot;+gatt.getDevice().getName()  
+                        +&quot; read &quot;  
+                        +characteristic.getUuid().toString()  
+                        +&quot; -&gt; &quot;  
+                        +Utils.bytesToHexString(characteristic.getValue()));  
+        }  
+
+        /** 
+         * 收到BLE终端写入数据回调 
+         */  
+        @Override  
+        public void onCharacteristicWrite(BluetoothGatt gatt,  
+                BluetoothGattCharacteristic characteristic) {  
+            Log.e(TAG,&quot;onCharWrite &quot;+gatt.getDevice().getName()  
+                    +&quot; write &quot;  
+                    +characteristic.getUuid().toString()  
+                    +&quot; -&gt; &quot;  
+                    +new String(characteristic.getValue()));  
+        }  
+    };  
+
+    // Device scan callback.  
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =  
+            new BluetoothAdapter.LeScanCallback() {  
+
+        @Override  
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {  
+            runOnUiThread(new Runnable() {  
+                @Override  
+                public void run() {  
+                    mLeDeviceListAdapter.addDevice(device);  
+                    mLeDeviceListAdapter.notifyDataSetChanged();  
+                }  
+            });  
+        }  
+    };  
+
+    private void displayGattServices(List&lt;BluetoothGattService&gt; gattServices) {  
+        if (gattServices == null) return;  
+
+        for (BluetoothGattService gattService : gattServices) {  
+            //-----Service的字段信息-----//  
+            int type = gattService.getType();  
+            Log.e(TAG,&quot;--&gt;service type:&quot;+Utils.getServiceType(type));  
+            Log.e(TAG,&quot;--&gt;includedServices size:&quot;+gattService.getIncludedServices().size());  
+            Log.e(TAG,&quot;--&gt;service uuid:&quot;+gattService.getUuid());  
+
+            //-----Characteristics的字段信息-----//  
+            List&lt;BluetoothGattCharacteristic&gt; gattCharacteristics =gattService.getCharacteristics();  
+            for (final BluetoothGattCharacteristic  gattCharacteristic: gattCharacteristics) {  
+                Log.e(TAG,&quot;----&gt;char uuid:&quot;+gattCharacteristic.getUuid());  
+
+                int permission = gattCharacteristic.getPermissions();  
+                Log.e(TAG,&quot;----&gt;char permission:&quot;+Utils.getCharPermission(permission));  
+
+                int property = gattCharacteristic.getProperties();  
+                Log.e(TAG,&quot;----&gt;char property:&quot;+Utils.getCharPropertie(property));  
+
+                byte[] data = gattCharacteristic.getValue();  
+                if (data != null &amp;&amp; data.length &gt; 0) {  
+                    Log.e(TAG,&quot;----&gt;char value:&quot;+new String(data));  
+                }  
+
+                //UUID_KEY_DATA是可以跟蓝牙模块串口通信的Characteristic  
+                if(gattCharacteristic.getUuid().toString().equals(UUID_KEY_DATA)){                    
+                    //测试读取当前Characteristic数据，会触发mOnDataAvailable.onCharacteristicRead()  
+                    mHandler.postDelayed(new Runnable() {  
+                        @Override  
+                        public void run() {  
+                            mBLE.readCharacteristic(gattCharacteristic);  
+                        }  
+                    }, 500);  
+
+                    //接受Characteristic被写的通知,收到蓝牙模块的数据后会触发mOnDataAvailable.onCharacteristicWrite()  
+                    mBLE.setCharacteristicNotification(gattCharacteristic, true);  
+                    //设置数据内容  
+                    gattCharacteristic.setValue(&quot;send data-&gt;&quot;);  
+                    //往蓝牙模块写入数据  
+                    mBLE.writeCharacteristic(gattCharacteristic);  
+                }  
+
+                //-----Descriptors的字段信息-----//  
+                List&lt;BluetoothGattDescriptor&gt; gattDescriptors = gattCharacteristic.getDescriptors();  
+                for (BluetoothGattDescriptor gattDescriptor : gattDescriptors) {  
+                    Log.e(TAG, &quot;--------&gt;desc uuid:&quot; + gattDescriptor.getUuid());  
+                    int descPermission = gattDescriptor.getPermissions();  
+                    Log.e(TAG,&quot;--------&gt;desc permission:&quot;+ Utils.getDescPermission(descPermission));  
+
+                    byte[] desData = gattDescriptor.getValue();  
+                    if (desData != null &amp;&amp; desData.length &gt; 0) {  
+                        Log.e(TAG, &quot;--------&gt;desc value:&quot;+ new String(desData));  
+                    }  
+                 }  
+            }  
+        }//  
+
+    }  
+}  
+</code></pre>
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/04/20/并发编程的挑战/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          并发编程的挑战
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/04/Java Socket实战之 传输对象/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Java Socket实战之 传输对象</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Android 蓝牙4.0 BLE 理解" data-title="Android 蓝牙4.0 BLE 理解" data-url="http://realfond.cn/2016/04/09/Android 蓝牙4.0 BLE 理解/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
