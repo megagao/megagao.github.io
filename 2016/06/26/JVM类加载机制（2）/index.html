@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>My New Post | megagao</title>
+  <title>JVM类加载机制（2） | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+  <meta name="description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
 <meta property="og:type" content="article">
-<meta property="og:title" content="My New Post">
-<meta property="og:url" content="http://realfond.cn/2016/07/06/My-New-Post-1/index.html">
+<meta property="og:title" content="JVM类加载机制（2）">
+<meta property="og:url" content="http://realfond.cn/2016/06/26/JVM类加载机制（2）/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description">
-<meta property="og:updated_time" content="2016-07-06T14:27:20.000Z">
+<meta property="og:description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
+<meta property="og:updated_time" content="2016-07-10T14:05:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="My New Post">
-<meta name="twitter:description">
+<meta name="twitter:title" content="JVM类加载机制（2）">
+<meta name="twitter:description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
   
@@ -72,13 +72,13 @@
 				<div class="tips-box hide">
 					<div class="tips-arrow"></div>
 					<ul class="tips-inner">
-						<li>Menu</li>
-						<li>Tags</li>
+						<li>菜单</li>
+						<li>Тэги</li>
 						
-						<li>Links</li>
+						<li>友情链接</li>
 						
 						
-						<li>Über</li>
+						<li>О сайте</li>
 						
 					</ul>
 				</div>
@@ -199,11 +199,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-My-New-Post-1" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-JVM类加载机制（2）" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/07/06/My-New-Post-1/" class="article-date">
-  	<time datetime="2016-07-06T14:27:20.000Z" itemprop="datePublished">2016-07-06</time>
+      <a href="/2016/06/26/JVM类加载机制（2）/" class="article-date">
+  	<time datetime="2016-06-26T11:04:10.000Z" itemprop="datePublished">2016-06-26</time>
 </a>
     </div>
   
@@ -216,7 +216,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      My New Post
+      JVM类加载机制（2）
     </h1>
   
 
@@ -232,7 +232,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>类加载器按照层次，从顶层到底层，分为以下三种：<br> （1）启动类加载器（Bootstrap ClassLoader）<br>  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。<br> （2）扩展类加载器（Extension ClassLoader）<br>  这个加载器负责加载JAVA_HOME/lib/ext目录中的，或者被java.ext.dirs系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器<br> （3）应用程序类加载器（Application ClassLoader）<br>  这个加载器是ClassLoader中getSystemClassLoader()方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径（Classpath）上所指定的类库，可直接使用这个加载器，如果应用程序没有自定义自己的类加载器，一般情况下这个就是程序中默认的类加载器</p>
+<p> 类加载的双亲委派模型<br>  双亲委派模型要求除了顶层的启动类加载器外，其他的类加载器都应当有自己的父类加载器。这里类加载器之间的父子关系一般不会以继承关系来实现，而是都使用组合关系来复用父加载器的代码<br>  工作过程：<br>   如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传递到顶层的启动类加载器中，<br>   只有当父类加载器反馈自己无法完成这个请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载<br>  好处：<br>   Java类随着它的类加载器一起具备了一种带有优先级的层次关系。例如类Object，它放在rt.jar中，无论哪一个类加载器要加载这个类，最终都是委派给启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都是同一个类<br>   判断两个类是否相同是通过classloader.class这种方式进行的，所以哪怕是同一个class文件如果被两个classloader加载，那么他们也是不同的类</p>
+<p> 实现自己的加载器<br>  只需要继承ClassLoader，并覆盖findClass方法。<br>  在调用loadClass方法时，会先根据委派模型在父加载器中加载，如果加载失败，则会调用自己的findClass方法来完成加载<br>  参考：<a href="http://blog.csdn.net/altchen/article/details/328698" target="_blank" rel="external">http://blog.csdn.net/altchen/article/details/328698</a></p>
+<p> 类加载器如何识别<br>  通过findLoadedClass来识别是否已经加载某个类，这个方法是findLoadedClass0的一个包装类，而findLoadedClass0是一个native方法</p>
+
       
     </div>
     
@@ -242,8 +246,8 @@
 <nav id="article-nav">
   
   
-    <a href="/2016/06/26/My-New-Post/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">My New Post</div>
+    <a href="/2016/06/08/JVM类加载机制（1）/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JVM类加载机制（1）</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -256,7 +260,7 @@
 <div class="share_jia">
 	<!-- JiaThis Button BEGIN -->
 	<div class="jiathis_style">
-		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<span class="jiathis_txt">分享到: &nbsp; </span>
 		<a class="jiathis_button_facebook"></a> 
     <a class="jiathis_button_twitter"></a>
     <a class="jiathis_button_plus"></a> 
@@ -278,7 +282,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="My-New-Post-1" data-title="My New Post" data-url="http://realfond.cn/2016/07/06/My-New-Post-1/"></div>
+	<div class="ds-thread" data-thread-key="JVM类加载机制（2）" data-title="JVM类加载机制（2）" data-url="http://realfond.cn/2016/06/26/JVM类加载机制（2）/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
