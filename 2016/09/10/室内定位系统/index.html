@@ -6,14 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>室内定位系统 | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="IndoorPos这是一个采用iBeacon技术的室内定位服务端程序，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。
-一、室内定位系统简介由于卫星信号到达地面时较弱、">
+  <meta name="description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。服务器端的代码共享在github上面：https://github.com/megagao/IndoorPos。里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据">
 <meta property="og:type" content="article">
 <meta property="og:title" content="室内定位系统">
 <meta property="og:url" content="http://realfond.cn/2016/09/10/室内定位系统/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description" content="IndoorPos这是一个采用iBeacon技术的室内定位服务端程序，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。
-一、室内定位系统简介由于卫星信号到达地面时较弱、">
+<meta property="og:description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。服务器端的代码共享在github上面：https://github.com/megagao/IndoorPos。里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%25A4%25E5%2586%2585%25E5%25AE%259A%25E4%25BD%258D%25E7%25B3%25BB%25E7%25BB%259F%25E6%259E%25B6%25E6%259E%2584%25E5%259B%25BE.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/IndoorPos%25E5%258A%259F%25E8%2583%25BD%25E7%25BB%2593%25E6%259E%2584%25E5%259B%25BE.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E6%2597%25A0%25E7%25BA%25BF%25E4%25BF%25A1%25E5%258F%25B7%25E6%25B8%2590%25E5%258F%2598%25E6%25A8%25A1%25E5%259E%258B.png">
@@ -31,11 +29,10 @@
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259E%25E6%2597%25B6%25E5%25AE%259A%25E4%25BD%258D%25E5%25A4%259A%25E4%25B8%25AA%25E5%259C%25BA%25E6%2589%2580.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%259D%2597%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%258E%2586%25E5%258F%25B2%25E6%2595%25B0%25E6%258D%25AE%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
-<meta property="og:updated_time" content="2016-09-10T09:03:45.000Z">
+<meta property="og:updated_time" content="2016-09-10T09:16:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="室内定位系统">
-<meta name="twitter:description" content="IndoorPos这是一个采用iBeacon技术的室内定位服务端程序，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。
-一、室内定位系统简介由于卫星信号到达地面时较弱、">
+<meta name="twitter:description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。服务器端的代码共享在github上面：https://github.com/megagao/IndoorPos。里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据">
 <meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%25A4%25E5%2586%2585%25E5%25AE%259A%25E4%25BD%258D%25E7%25B3%25BB%25E7%25BB%259F%25E6%259E%25B6%25E6%259E%2584%25E5%259B%25BE.png">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
@@ -99,7 +96,7 @@
 						<li>Links</li>
 						
 						
-						<li>A propos</li>
+						<li>Über</li>
 						
 					</ul>
 				</div>
@@ -257,8 +254,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="IndoorPos"><a href="#IndoorPos" class="headerlink" title="IndoorPos"></a>IndoorPos</h1><p>这是一个采用iBeacon技术的室内定位服务端程序，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。</p>
+        <p>这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。服务器端的代码共享在github上面：<a href="https://github.com/megagao/IndoorPos" target="_blank" rel="external">https://github.com/megagao/IndoorPos</a>。<br>里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。相关的专利和软件著作权正在申请过程中。</p>
 <h1 id="一、室内定位系统简介"><a href="#一、室内定位系统简介" class="headerlink" title="一、室内定位系统简介"></a>一、室内定位系统简介</h1><p>由于卫星信号到达地面时较弱、不能穿透建筑物等问题，在室内环境中无法使用卫星定位。本室内定位系统是一种采用蓝牙4.0 iBeacon基站定位技术，结合高容错定位算法进行室内定位的系统，定位基站廉价、易安置，定位终端可直接采用支持蓝牙4.0的移动终端，由于目前绝大多数移动终端都已支持蓝牙4.0，因此本系统不需要使用额外的定位标签、设备，直接可以通过移动电子设备进行定位。从业务应用的角度来看，本系统可实现对人员的实时定位、导航指路等功能以及贵重物品、车辆的定位；同时还可进行区域人流分析，人员密度分析，停留时间、人员流量统计，特定人员监控，区域报警和人员轨迹查看等多种应用的二次开发。</p>
+ <a id="more"></a>
 <p>室内定位系统可分为基站、被定位终端、服务器、数据库、客户端等五个部分，分别详述如下：</p>
 <ol>
 <li>基站：布置于需要定位的环境，向外发射蓝牙信号，各基站发射频率与发射强度保持一致，每一均有独立ID及相对于定位环境坐标原点的坐标，基站向外发射包括自己ID的信号，基站坐标保存在数据库中。</li>
