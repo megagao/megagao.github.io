@@ -12,12 +12,12 @@
 <meta property="og:url" content="http://realfond.cn/2016/06/08/JVM类加载机制（1）/index.html">
 <meta property="og:site_name" content="megagao">
 <meta property="og:description" content="众所周知，平台无关性是Java语言的一个非常大的特性，在Java刚刚诞生之时，Sun公司就提出“write once， run anywhere”的口号，这也是Java最初引人关注的原因之一。这个特性是依靠JVM来实现的,其他语言（如C/CPP）是直接将源文件编译成二进制本地机器码，直接由相关的平台来执行这些机器指令；Java则是先将.java文件编译成虚拟机可以执行的.class文件，然后再由虚">
-<meta property="og:image" content="http://img2.ph.126.net/lu5Qgys0Kh0ivHldCyrkhQ==/4818288651433758284.png">
-<meta property="og:updated_time" content="2016-06-18T14:03:12.000Z">
+<meta property="og:image" content="http://img.blog.csdn.net/20160910162618026?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:updated_time" content="2016-09-10T08:41:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM类加载机制（1）">
 <meta name="twitter:description" content="众所周知，平台无关性是Java语言的一个非常大的特性，在Java刚刚诞生之时，Sun公司就提出“write once， run anywhere”的口号，这也是Java最初引人关注的原因之一。这个特性是依靠JVM来实现的,其他语言（如C/CPP）是直接将源文件编译成二进制本地机器码，直接由相关的平台来执行这些机器指令；Java则是先将.java文件编译成虚拟机可以执行的.class文件，然后再由虚">
-<meta name="twitter:image" content="http://img2.ph.126.net/lu5Qgys0Kh0ivHldCyrkhQ==/4818288651433758284.png">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160910162618026?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
   
@@ -241,7 +241,7 @@
         <p>众所周知，平台无关性是Java语言的一个非常大的特性，在Java刚刚诞生之时，Sun公司就提出“write once， run anywhere”的口号，这也是Java最初引人关注的原因之一。这个特性是依靠JVM来实现的,其他语言（如C/CPP）是直接将源文件编译成二进制本地机器码，直接由相关的平台来执行这些机器指令；Java则是先将.java文件编译成虚拟机可以执行的.class文件，然后再由虚拟机针对特定的平台进行处理。</p>
 <p>事实上，JVM的这一特性还能实现<em>语言无关性</em>，而且语言无关性的优势甚至会在将来超越平台无关性。语言无关性是指JVM不和包括Java在内的任何语言绑定，它只与.class文件这种特定的二进制文件格式所关联。也就是说，无论什么语言写的程序，只要能将其编译成.class文件，甚至直接用十六进制编辑器直接产生的class文件，只要符合class文件的格式要求，那么就可以被JVM所执行。比如现在有的Jython，Jruby等等，这样的好处是让其他语言也可以使用强大的JVM。 <a id="more"></a></p>
 <p>简而言之，当程序执行时，虚拟机把描述类的数据从class文件加载到内存，并对数据进行校验、转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是Java虚拟机的类加载机制。</p>
-<h1 id="类加载的时机"><a href="#类加载的时机" class="headerlink" title="类加载的时机"></a>类加载的时机</h1><p>类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载（Loading）、验证（Verification）、准备(Preparation)、解析(Resolution)、初始化(Initialization)、使用(Using)和卸载(Unloading)7个阶段。其中准备、验证、解析3个部分统称为连接（Linking）。如下图所示。 <img src="http://img2.ph.126.net/lu5Qgys0Kh0ivHldCyrkhQ==/4818288651433758284.png" alt="类的生命周期"></p>
+<h1 id="类加载的时机"><a href="#类加载的时机" class="headerlink" title="类加载的时机"></a>类加载的时机</h1><p>类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载（Loading）、验证（Verification）、准备(Preparation)、解析(Resolution)、初始化(Initialization)、使用(Using)和卸载(Unloading)7个阶段。其中准备、验证、解析3个部分统称为连接（Linking）。如下图所示。 <img src="http://img.blog.csdn.net/20160910162618026?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="类的生命周期"></p>
 <p>这其中，加载、验证、准备、初始化和卸载这5个阶段的顺序是确定的，类的加载过程必须按照这种顺序按部就班地开始，而解析阶段则不一定：它在某些情况下可以在初始化阶段之后再开始，这是为了支持Java语言的运行时绑定（也称为动态绑定或晚期绑定）。</p>
 <p>Java虚拟机规范当中并没有进行强制约束什么情况需要进行类加载过程的第一步——加载，但是对于初始化阶段，虚拟机规范严格规定了只有5种情况必须立即对类进行“初始化”（在此之前的步骤也要提前开始）：</p>
 <ul>
