@@ -4,18 +4,35 @@
   <meta charset="utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-  <title>JVM类加载机制（2） | megagao</title>
+  <title>My New Post | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
+  <meta name="description" content="这是我研二上学期主要做的项目，依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：http://github.com/megagao/production_ms
+项目架构(Spring+SpringMVC+Mybatis）
+项目技术架构">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM类加载机制（2）">
-<meta property="og:url" content="http://realfond.cn/2016/06/26/JVM类加载机制（2）/index.html">
+<meta property="og:title" content="My New Post">
+<meta property="og:url" content="http://realfond.cn/2016/12/27/制造装备物联及生产管理系统/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
-<meta property="og:updated_time" content="2016-09-10T12:07:23.000Z">
+<meta property="og:description" content="这是我研二上学期主要做的项目，依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：http://github.com/megagao/production_ms
+项目架构(Spring+SpringMVC+Mybatis）
+项目技术架构">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E9%25A1%25B9%25E7%259B%25AE%25E6%259E%25B6%25E6%259E%2584.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%25AE%25BE%25E8%25AE%25A1.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E7%2599%25BB%25E5%25BD%2595%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%259B%25BE%25E7%2589%2587%25E4%25B8%258A%25E4%25BC%25A0.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2596%2587%25E4%25BB%25B6%25E4%25B8%258A%25E4%25BC%25A0.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%25AF%258C%25E6%2596%2587%25E6%259C%25AC%25E7%25BC%2596%25E8%25BE%2591.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%2585%25B3%25E8%2581%2594%25E4%25BF%25A1%25E6%2581%25AF.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/search-box%25E6%259F%25A5%25E6%2589%25BE.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%258A%25A8%25E6%2580%2581%25E6%259D%2583%25E9%2599%2590%25E6%258E%25A7%25E5%2588%25B6.png">
+<meta property="og:updated_time" content="2016-12-27T08:30:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM类加载机制（2）">
-<meta name="twitter:description" content="类加载器按照层次，从顶层到底层，分为以下三种： （1）启动类加载器（Bootstrap ClassLoader）  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。 （2）扩展类加载器（Extension ClassLoader）  这个加载器负责加载">
+<meta name="twitter:title" content="My New Post">
+<meta name="twitter:description" content="这是我研二上学期主要做的项目，依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：http://github.com/megagao/production_ms
+项目架构(Spring+SpringMVC+Mybatis）
+项目技术架构">
+<meta name="twitter:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E9%25A1%25B9%25E7%259B%25AE%25E6%259E%25B6%25E6%259E%2584.png">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
   
@@ -199,11 +216,11 @@
 	</div>
 </nav>
 
-      <div class="body-wrap"><article id="post-JVM类加载机制（2）" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-制造装备物联及生产管理系统" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2016/06/26/JVM类加载机制（2）/" class="article-date">
-  	<time datetime="2016-06-26T11:04:10.000Z" itemprop="datePublished">2016-06-26</time>
+      <a href="/2016/12/27/制造装备物联及生产管理系统/" class="article-date">
+  	<time datetime="2016-12-27T07:30:25.000Z" itemprop="datePublished">2016-12-27</time>
 </a>
     </div>
   
@@ -216,7 +233,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      JVM类加载机制（2）
+      My New Post
     </h1>
   
 
@@ -232,9 +249,54 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>类加载器按照层次，从顶层到底层，分为以下三种：<br> （1）启动类加载器（Bootstrap ClassLoader）<br>  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。<br> （2）扩展类加载器（Extension ClassLoader）<br>  这个加载器负责加载JAVA_HOME/lib/ext目录中的，或者被java.ext.dirs系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器<br> （3）应用程序类加载器（Application ClassLoader）<br>  这个加载器是ClassLoader中getSystemClassLoader()方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径（Classpath）上所指定的类库，可直接使用这个加载器，如果应用程序没有自定义自己的类加载器，一般情况下这个就是程序中默认的类加载器<br>  <a id="more"></a><br> 类加载的双亲委派模型<br>  双亲委派模型要求除了顶层的启动类加载器外，其他的类加载器都应当有自己的父类加载器。这里类加载器之间的父子关系一般不会以继承关系来实现，而是都使用组合关系来复用父加载器的代码<br>  工作过程：<br>   如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传递到顶层的启动类加载器中，<br>   只有当父类加载器反馈自己无法完成这个请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载<br>  好处：<br>   Java类随着它的类加载器一起具备了一种带有优先级的层次关系。例如类Object，它放在rt.jar中，无论哪一个类加载器要加载这个类，最终都是委派给启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都是同一个类<br>   判断两个类是否相同是通过classloader.class这种方式进行的，所以哪怕是同一个class文件如果被两个classloader加载，那么他们也是不同的类</p>
-<p> 实现自己的加载器<br>  只需要继承ClassLoader，并覆盖findClass方法。<br>  在调用loadClass方法时，会先根据委派模型在父加载器中加载，如果加载失败，则会调用自己的findClass方法来完成加载<br>  参考：<a href="http://blog.csdn.net/altchen/article/details/328698" target="_blank" rel="external">http://blog.csdn.net/altchen/article/details/328698</a></p>
-<p> 类加载器如何识别<br>  通过findLoadedClass来识别是否已经加载某个类，这个方法是findLoadedClass0的一个包装类，而findLoadedClass0是一个native方法</p>
+        <p>这是我研二上学期主要做的项目，依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：<a href="http://github.com/megagao/production_ms" title="github地址" target="_blank" rel="external">http://github.com/megagao/production_ms</a></p>
+<h2 id="项目架构-Spring-SpringMVC-Mybatis）"><a href="#项目架构-Spring-SpringMVC-Mybatis）" class="headerlink" title="项目架构(Spring+SpringMVC+Mybatis）"></a>项目架构(Spring+SpringMVC+Mybatis）</h2><p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E9%25A1%25B9%25E7%259B%25AE%25E6%259E%25B6%25E6%259E%2584.png" alt="项目架构图"></p>
+<h2 id="项目技术架构-Spring-SpringMVC-Mybatis）"><a href="#项目技术架构-Spring-SpringMVC-Mybatis）" class="headerlink" title="项目技术架构(Spring+SpringMVC+Mybatis）"></a>项目技术架构(Spring+SpringMVC+Mybatis）</h2><ul>
+<li>Maven</li>
+<li>Spring（IOC DI AOP 声明式事务处理）</li>
+<li>SpringMVC（支持Restful风格）</li>
+<li>Hibernate Validator（参数校验）</li>
+<li>Mybatis（最少配置方案）</li>
+<li>jQuery EasyUI开发前端页面，利用jQuery文件上传插件实现拖拽上传的效果并对文件类型、大小、数量进行控制；利用search-box实现查找功能</li>
+<li><a href="http://wosyingjun.iteye.com/blog/2306139" target="_blank" rel="external">Druid（数据源配置 sql防注入 sql性能监控)</a></li>
+<li>统一的异常处理</li>
+<li>JSP JSTL JavaScript</li>
+<li>shiro权限控制,结合ajax实现了异步认证与异步授权，同时实现了细粒度的权限动态分配（到按钮级别）</li>
+<li>使用kindeditor富文本编辑器，处理图片上传和富文本编辑</li>
+</ul>
+<h2 id="数据库设计（详见sql文件）"><a href="#数据库设计（详见sql文件）" class="headerlink" title="数据库设计（详见sql文件）"></a>数据库设计（详见sql文件）</h2><p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%25E8%25AE%25BE%25E8%25AE%25A1.png" alt="数据库设计"></p>
+<h2 id="软件运行截图"><a href="#软件运行截图" class="headerlink" title="软件运行截图"></a>软件运行截图</h2><ul>
+<li><strong>登录界面</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E7%2599%25BB%25E5%25BD%2595%25E7%2595%258C%25E9%259D%25A2.png" alt="登录界面"></p>
+<ul>
+<li><strong>运行界面</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png" alt="运行界面"></p>
+<ul>
+<li><strong>图片上传</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%259B%25BE%25E7%2589%2587%25E4%25B8%258A%25E4%25BC%25A0.png" alt="图片上传"></p>
+<ul>
+<li><strong>文件上传</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2596%2587%25E4%25BB%25B6%25E4%25B8%258A%25E4%25BC%25A0.png" alt="文件上传"></p>
+<ul>
+<li><strong>富文本编辑</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%25AF%258C%25E6%2596%2587%25E6%259C%25AC%25E7%25BC%2596%25E8%25BE%2591.png" alt="富文本编辑"></p>
+<ul>
+<li><strong>关联信息</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%2585%25B3%25E8%2581%2594%25E4%25BF%25A1%25E6%2581%25AF.png" alt="关联信息"></p>
+<ul>
+<li><strong>search-box查找</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/search-box%25E6%259F%25A5%25E6%2589%25BE.png" alt="search-box查找"></p>
+<ul>
+<li><strong>动态权限控制</strong></li>
+</ul>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%258A%25A8%25E6%2580%2581%25E6%259D%2583%25E9%2599%2590%25E6%258E%25A7%25E5%2588%25B6.png" alt="动态权限控制"></p>
 
       
     </div>
@@ -244,18 +306,9 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/07/13/领域驱动开发实践/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          领域驱动开发实践
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/06/08/JVM类加载机制（1）/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">JVM类加载机制（1）</div>
+    <a href="/2016/09/10/室内定位系统/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">室内定位系统</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -290,7 +343,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="JVM类加载机制（2）" data-title="JVM类加载机制（2）" data-url="http://realfond.cn/2016/06/26/JVM类加载机制（2）/"></div>
+	<div class="ds-thread" data-thread-key="制造装备物联及生产管理系统" data-title="My New Post" data-url="http://realfond.cn/2016/12/27/制造装备物联及生产管理系统/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
