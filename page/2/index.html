@@ -77,7 +77,7 @@
 						<li>Links</li>
 						
 						
-						<li>Über</li>
+						<li>About</li>
 						
 					</ul>
 				</div>
@@ -195,6 +195,74 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-Android 蓝牙4.0 BLE 理解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/04/09/Android 蓝牙4.0 BLE 理解/" class="article-date">
+  	<time datetime="2016-04-09T10:32:57.000Z" itemprop="datePublished">2016-04-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/09/Android 蓝牙4.0 BLE 理解/">Android 蓝牙4.0 BLE 理解</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实验用的基站已经到了，为了进行定位算法精确度实验，需要开发安卓的程序来接收BLE基站的功率值并与服务器进行通信，因此，最近的主要精力都放在了安卓的ble模块上面，今天来分享一些关于Android蓝牙4.0 BLE的内容。</p>
+<p>本文简单结合两篇文章</p>
+<p><a href="http://blog.csdn.net/hellogv/article/details/24267685">http://blog.csdn.net/hellogv/article/details/24267685</a></p>
+<p><a href="http://blog.csdn.net/jimoduwu/article/details/21604215">http://blog.csdn.net/jimoduwu/article/details/21604215</a></p>
+<p>在BLE协议中，有两个角色，周边（Periphery）和中央（Central），一个中央可以同时连接多个周边，但是一个周边某一时刻只能连接一个中央。但是不管是Periphery还是Central都是可以实现 GATT server 和 GATT client去传输数据，但是无法同时都是。</p>
+<p>大概了解了概念后，看看Android BLE SDK的四个关键类（class）：</p>
+<p>a) BluetoothGattServer作为周边来提供数据；BluetoothGattServerCallback返回周边的状态。</p>
+<p>b) BluetoothGatt作为中央来使用和处理数据；BluetoothGattCallback返回中央的状态和周边提供的数据。</p>
+<p>因为我们讨论的是Android的BLE SDK，下面所有的BluetoothGattServer代表周边，BluetoothGatt代表中央。</p>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/04/09/Android 蓝牙4.0 BLE 理解/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-Java Socket实战之 传输对象" class="article article-type-post" itemscope itemprop="blogPost">
   

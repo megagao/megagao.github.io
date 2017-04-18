@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>单例的五种写法 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单例的五种写法">
+<meta property="og:url" content="http://realfond.cn/2017/04/18/My-New-Post/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+<meta property="og:updated_time" content="2017-04-18T14:29:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="单例的五种写法">
+<meta name="twitter:description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>About</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 10px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-My-New-Post" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/04/18/My-New-Post/" class="article-date">
+  	<time datetime="2017-04-18T13:52:17.000Z" itemprop="datePublished">2017-04-18</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      单例的五种写法
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：<br><a href="http://cantellow.iteye.com/blog/838473" target="_blank" rel="external">http://cantellow.iteye.com/blog/838473</a><br><a href="http://blog.csdn.net/mixiuali/article/details/8107286" target="_blank" rel="external">http://blog.csdn.net/mixiuali/article/details/8107286</a><br><a href="http://blog.csdn.net/jason0539/article/details/23297037/" target="_blank" rel="external">http://blog.csdn.net/jason0539/article/details/23297037/</a><br><a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br><a id="more"></a></p>
+<h2 id="一、懒汉"><a href="#一、懒汉" class="headerlink" title="一、懒汉"></a>一、懒汉</h2><p>懒汉模式是指需要用到对象时再创建对象，按是否满足多线程环境，可分为线程不安全和线程安全两种方式。</p>
+<p><strong>线程不安全：</strong></p>
+<pre><code>public class Singleton {  
+    private static Singleton instance;  
+    private Singleton (){}  
+
+    public static Singleton getInstance() {  
+        if (instance == null) {  
+            instance = new Singleton();  
+        }  
+        return instance;  
+    }  
+}  
+</code></pre><p> 这种写法lazy loading很明显，但由于不能保证getInstance()方法的原子性，会导致在多线程不能正常满足需求。</p>
+<p><strong>线程安全：</strong></p>
+<pre><code>public class Singleton {  
+    private static Singleton instance;  
+    private Singleton (){}  
+    public static synchronized Singleton getInstance() {  
+    if (instance == null) {  
+        instance = new Singleton();  
+    }  
+    return instance;  
+    }  
+}  
+</code></pre><p> 这种写法直接对getInstance()方法加锁，能够保证其原子性，同时也具备lazy loading。但是，synchronized加在静态方法上，相当于类锁，锁的粒度太大，因此效率很低。</p>
+<h2 id="二、饿汉"><a href="#二、饿汉" class="headerlink" title="二、饿汉"></a>二、饿汉</h2><p>饿汉模式是指类加载时即通过static代码完成对象创建，而不是需要实例对象时再进行创建的lazy loading模式。当该类被加载到JVM内存时，会调用类构造器的clinit()方法，执行类变量的赋值动作和静态语句块。饿汉模式正是通过这种机制，在类加载时完成单例对象创建。</p>
+<p><strong>通过静态变量初始化</strong></p>
+<pre><code>public class Singleton {  
+    private static Singleton instance = new Singleton();  
+    private Singleton (){}  
+    public static Singleton getInstance() {  
+    return instance;  
+    }  
+}  
+</code></pre><p><strong>通过静态变量初始化</strong></p>
+<pre><code>public class Singleton {  
+    private Singleton instance = null;  
+    static {  
+    instance = new Singleton();  
+    }  
+    private Singleton (){}  
+    public static Singleton getInstance() {  
+    return this.instance;  
+    }  
+}  
+</code></pre><h2 id="三、静态内部类"><a href="#三、静态内部类" class="headerlink" title="三、静态内部类"></a>三、静态内部类</h2><p>这种方式同样利用了classloder的机制来保证初始化instance时只有一个线程，它跟第二种方式不同的是（很细微的差别）：第二种方式是只要Singleton类被装载了，那么instance就会被实例化（没有达到lazy loading效果），而这种方式是Singleton类被装载了，instance不一定被初始化。因为SingletonHolder类没有被主动使用，只有显示通过调用getInstance方法时，才会显示装载SingletonHolder类，从而实例化instance。想象一下，如果实例化instance很消耗资源，我想让他延迟加载，另外一方面，我不希望在Singleton类加载时就实例化，因为我不能确保Singleton类还可能在其他的地方被主动使用从而被加载，那么这个时候实例化instance显然是不合适的。这个时候，这种方式相比第三和第四种方式就显得很合理。</p>
+<pre><code>public class Singleton {  
+    private static class SingletonHolder {  
+    private static final Singleton INSTANCE = new Singleton();  
+    }  
+    private Singleton (){}  
+    public static final Singleton getInstance() {  
+    return SingletonHolder.INSTANCE;  
+    }  
+}  
+</code></pre><h2 id="四、枚举"><a href="#四、枚举" class="headerlink" title="四、枚举"></a>四、枚举</h2><p> 这种方式是Effective Java作者Josh Bloch 提倡的方式，<em>它不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象</em>，推荐！</p>
+<pre><code>public enum Singleton {  
+    INSTANCE;  
+    public void whateverMethod() {  
+    }  
+}  
+</code></pre><h2 id="五、双重校验锁"><a href="#五、双重校验锁" class="headerlink" title="五、双重校验锁"></a>五、双重校验锁</h2><p>这个是对懒汉模式线程安全方式的升级版，俗称双重检查锁定，降低了锁的粒度，可以提高并发度。详细介绍请查看：<br><a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br>在JDK1.5之后，双重检查锁定才能够正常达到单例效果。</p>
+<pre><code>public class Singleton {  
+    private volatile static Singleton singleton;  
+    private Singleton (){}  
+    public static Singleton getSingleton() {  
+    if (singleton == null) {  
+        synchronized (Singleton.class) {  
+        if (singleton == null) {  
+            singleton = new Singleton();  
+        }  
+        }  
+    }  
+    return singleton;  
+    }  
+}  
+</code></pre><p>总结<br>有两个问题需要注意：<br>1.如果单例由不同的类装载器装入，那便有可能存在多个单例类的实例。假定不是远端存取，例如一些servlet容器对每个servlet使用完全不同的类装载器，这样的话如果有两个servlet访问一个单例类，它们就都会有各自的实例。<br>2.如果Singleton实现了java.io.Serializable接口，那么这个类的实例就可能被序列化和复原。不管怎样，如果你序列化一个单例类的对象，接下来复原多个那个对象，那你就会有多个单例类的实例。<br>对第一个问题修复的办法是：</p>
+<p>Java代码  收藏代码<br>    private static Class getClass(String classname)<br>                                             throws ClassNotFoundException {<br>          ClassLoader classLoader = Thread.currentThread().getContextClassLoader();     </p>
+<pre><code>      if(classLoader == null)     
+         classLoader = Singleton.class.getClassLoader();     
+
+      return (classLoader.loadClass(classname));     
+   }     
+}  
+</code></pre><p> 对第二个问题修复的办法是：</p>
+<pre><code>public class Singleton implements java.io.Serializable{     
+       public static Singleton INSTANCE = new Singleton();     
+
+       protected Singleton() { 
+    }     
+       private Object readResolve() {     
+           return INSTANCE;     
+       }    
+}   
+</code></pre>
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/12/27/制造装备物联及生产管理系统/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">制造装备物联及生产管理系统</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="My-New-Post" data-title="单例的五种写法" data-url="http://realfond.cn/2017/04/18/My-New-Post/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
