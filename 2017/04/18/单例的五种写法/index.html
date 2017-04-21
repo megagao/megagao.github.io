@@ -6,16 +6,16 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>单例的五种写法 | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+  <meta name="description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="单例的五种写法">
 <meta property="og:url" content="http://realfond.cn/2017/04/18/单例的五种写法/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
-<meta property="og:updated_time" content="2017-04-19T03:45:10.000Z">
+<meta property="og:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+<meta property="og:updated_time" content="2017-04-21T11:06:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单例的五种写法">
-<meta name="twitter:description" content="一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
+<meta name="twitter:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
   
@@ -232,7 +232,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>一般来说，单例有五种写法，分别是懒汉，恶汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：<br><a href="http://cantellow.iteye.com/blog/838473" target="_blank" rel="external">http://cantellow.iteye.com/blog/838473</a><br><a href="http://blog.csdn.net/mixiuali/article/details/8107286" target="_blank" rel="external">http://blog.csdn.net/mixiuali/article/details/8107286</a><br><a href="http://blog.csdn.net/jason0539/article/details/23297037/" target="_blank" rel="external">http://blog.csdn.net/jason0539/article/details/23297037/</a><br><a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br><a id="more"></a></p>
+        <p>一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：<br><a href="http://cantellow.iteye.com/blog/838473" target="_blank" rel="external">http://cantellow.iteye.com/blog/838473</a><br><a href="http://blog.csdn.net/mixiuali/article/details/8107286" target="_blank" rel="external">http://blog.csdn.net/mixiuali/article/details/8107286</a><br><a href="http://blog.csdn.net/jason0539/article/details/23297037/" target="_blank" rel="external">http://blog.csdn.net/jason0539/article/details/23297037/</a><br><a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br><a id="more"></a></p>
 <h2 id="一、懒汉"><a href="#一、懒汉" class="headerlink" title="一、懒汉"></a>一、懒汉</h2><p>“懒汉”与“饿汉”的区别，是创建单例对象的时机的不同。“懒汉”是在真正用到的时候才去建这个单例对象，这种方式可以实现懒加载（lazy loading）。按是否满足多线程环境，可分为线程不安全和线程安全两种方式。</p>
 <p><strong>线程不安全：</strong></p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
