@@ -196,6 +196,70 @@
 
       <div class="body-wrap">
   
+    <article id="post-利用filter和全局ajax事件实现shiro session过期登录跳转" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/05/29/利用filter和全局ajax事件实现shiro session过期登录跳转/" class="article-date">
+  	<time datetime="2017-05-29T11:13:28.000Z" itemprop="datePublished">2017-05-29</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/29/利用filter和全局ajax事件实现shiro session过期登录跳转/">利用filter和全局ajax事件实现shiro session过期登录跳转</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>起因</strong></p>
+<p>我的生产管理ERP（<a href="https://github.com/megagao/production_ssm">https://github.com/megagao/production_ssm</a>）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。</p>
+<p>shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后台数据交互采用的是ajax异步的方式，因此需要考虑对ajax请求进行超时处理。</p>
+<p><strong>思路：</strong></p>
+<p>实现一个filter，判断当前session是否过期，及是否为ajax请求（本系统数据交互均采用ajax方式，其他非ajax请求不需要判断，比如跳转登录界面的请求），若满足判定，则在response头部设置session-status值，返回到前端，通过全局ajax事件读取相应值进行判断，若过期则跳转登录界面。
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/05/29/利用filter和全局ajax事件实现shiro session过期登录跳转/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-（转）CentOS7安装mysql5.6" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -408,18 +472,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这是我研二上学期主要做的项目，依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：<a href="http://github.com/megagao/production_ms" title="github地址">http://github.com/megagao/production_ms</a>。</p>
+        <p>这是一个生产管理ERP系统。依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：<a href="http://github.com/megagao/production_ms" title="github地址">http://github.com/megagao/production_ms</a>。</p>
 <h2 id="项目技术架构-Spring-SpringMVC-Mybatis）"><a href="#项目技术架构-Spring-SpringMVC-Mybatis）" class="headerlink" title="项目技术架构(Spring+SpringMVC+Mybatis）"></a>项目技术架构(Spring+SpringMVC+Mybatis）</h2><ul>
 <li>Maven</li>
 <li>Spring（IOC DI AOP 声明式事务处理）</li>
 <li>SpringMVC（支持Restful风格）</li>
 <li>Hibernate Validator（参数校验）</li>
 <li>Mybatis（最少配置方案）</li>
+<li>shiro权限控制,结合ajax实现了异步认证与异步授权，同时实现了细粒度的权限动态分配（到按钮级别）；添加了shiro session过期的登录跳转</li>
 <li>jQuery EasyUI开发前端页面，利用jQuery文件上传插件实现拖拽上传的效果并对文件类型、大小、数量进行控制；利用search-box实现查找功能</li>
 <li><a href="http://wosyingjun.iteye.com/blog/2306139">Druid（数据源配置 sql防注入 sql性能监控)</a></li>
 <li>统一的异常处理</li>
 <li>JSP JSTL JavaScript</li>
-<li>shiro权限控制,结合ajax实现了异步认证与异步授权，同时实现了细粒度的权限动态分配（到按钮级别）</li>
 <li>kindeditor富文本编辑器，处理图片上传和富文本编辑
       
     </div>
@@ -765,71 +829,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/05/24/Java内存泄漏/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-23种设计模式全解析 " class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/05/18/23种设计模式全解析 /" class="article-date">
-  	<time datetime="2016-05-18T12:30:52.000Z" itemprop="datePublished">2016-05-18</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/18/23种设计模式全解析 /">23种设计模式全解析</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近在对室内定位系统进行重构，发现前人总结出的设计模式真心非常有用，在网上看到一篇很好的帖子，绝对良心分享！</p>
-<h1 id="一、设计模式的分类"><a href="#一、设计模式的分类" class="headerlink" title="一、设计模式的分类"></a>一、设计模式的分类</h1><p>总体来说设计模式分为三大类：</p>
-<p>创建型模式，共五种：工厂方法模式、抽象工厂模式、单例模式、建造者模式、原型模式。</p>
-<p>结构型模式，共七种：适配器模式、装饰器模式、代理模式、外观模式、桥接模式、组合模式、享元模式。</p>
-<p>行为型模式，共十一种：策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。</p>
-<p>其实还有两类：并发型模式和线程池模式。用一个图片来整体描述一下：</p>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/05/18/23种设计模式全解析 /#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
