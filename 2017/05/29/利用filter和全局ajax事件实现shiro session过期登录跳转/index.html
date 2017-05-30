@@ -8,20 +8,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="起因
 我的生产管理ERP（https://github.com/megagao/production_ssm）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。
-shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后">
+shiro在管理session后，在session过期时应当进行跳转，由于我的系统前端采用jQuery easyUI，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用filter和全局ajax事件实现shiro session过期登录跳转">
 <meta property="og:url" content="http://realfond.cn/2017/05/29/利用filter和全局ajax事件实现shiro session过期登录跳转/index.html">
 <meta property="og:site_name" content="megagao">
 <meta property="og:description" content="起因
 我的生产管理ERP（https://github.com/megagao/production_ssm）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。
-shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后">
-<meta property="og:updated_time" content="2017-05-30T11:57:19.000Z">
+shiro在管理session后，在session过期时应当进行跳转，由于我的系统前端采用jQuery easyUI，">
+<meta property="og:updated_time" content="2017-05-30T11:58:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用filter和全局ajax事件实现shiro session过期登录跳转">
 <meta name="twitter:description" content="起因
 我的生产管理ERP（https://github.com/megagao/production_ssm）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。
-shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后">
+shiro在管理session后，在session过期时应当进行跳转，由于我的系统前端采用jQuery easyUI，">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
   
@@ -240,7 +240,7 @@ shiro在管理session后，在session过期时应当进行跳转，由于我的�
       
         <p><strong>起因</strong></p>
 <p>我的生产管理ERP（<a href="https://github.com/megagao/production_ssm" target="_blank" rel="external">https://github.com/megagao/production_ssm</a>）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。</p>
-<p>shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后台数据交互采用的是ajax异步的方式，因此需要考虑对ajax请求进行超时处理。</p>
+<p>shiro在管理session后，在session过期时应当进行跳转，由于我的系统前端采用jQuery easyUI，前后台数据交互采用的是ajax异步的方式，因此需要考虑对ajax请求进行超时处理。</p>
 <p><strong>思路</strong></p>
 <p>实现一个filter，判断当前session是否过期，及是否为ajax请求（本系统数据交互均采用ajax方式，其他非ajax请求不需要判断，比如跳转登录界面的请求），若满足判定，则在response头部设置session-status值，返回到前端，通过全局ajax事件读取相应值进行判断，若过期则跳转登录界面。<a id="more"></a></p>
 <p><strong>具体步骤</strong></p>

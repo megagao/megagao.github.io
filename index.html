@@ -224,7 +224,7 @@
       
         <p><strong>起因</strong></p>
 <p>我的生产管理ERP（<a href="https://github.com/megagao/production_ssm">https://github.com/megagao/production_ssm</a>）系统有个bug，就是session过期后，不能自动跳转到登录页面，一直想把这个功能实现，但是因为手头事情比较多，所以拖了一阵子。趁着端午假期，把这个功能实现了，特此记录。</p>
-<p>shiro在管理session后，在session过期时应当进行跳转，由于我的系统采用jQuery easyUI，前后台数据交互采用的是ajax异步的方式，因此需要考虑对ajax请求进行超时处理。</p>
+<p>shiro在管理session后，在session过期时应当进行跳转，由于我的系统前端采用jQuery easyUI，前后台数据交互采用的是ajax异步的方式，因此需要考虑对ajax请求进行超时处理。</p>
 <p><strong>思路</strong></p>
 <p>实现一个filter，判断当前session是否过期，及是否为ajax请求（本系统数据交互均采用ajax方式，其他非ajax请求不需要判断，比如跳转登录界面的请求），若满足判定，则在response头部设置session-status值，返回到前端，通过全局ajax事件读取相应值进行判断，若过期则跳转登录界面。
       
