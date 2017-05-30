@@ -28,7 +28,7 @@ Mave">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/session%25E8%25BF%2587%25E6%259C%259F%25E8%25B7%25B3%25E8%25BD%25AC%25E7%2599%25BB%25E5%25BD%2595.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/RBAC%25E6%259D%2583%25E9%2599%2590%25E6%25A8%25A1%25E5%259E%258B.png">
 <meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%258A%25A8%25E6%2580%2581%25E6%259D%2583%25E9%2599%2590%25E6%258E%25A7%25E5%2588%25B6.png">
-<meta property="og:updated_time" content="2017-05-29T12:10:45.000Z">
+<meta property="og:updated_time" content="2017-05-30T11:45:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="制造装备物联及生产管理系统">
 <meta name="twitter:description" content="这是一个生产管理ERP系统。依托科技计划重点项目“制造装备物联及生产管理系统研发”，项目研发制造装备物联以及生产管理的系统，主要包括：计划进度、设备管理、工艺监控、物料监控、人员监控、质量监控、系统管理7大模块。项目源码共享在github上面：http://github.com/megagao/production_ms。
@@ -286,13 +286,8 @@ Mave">
 <li><strong>文件上传</strong></li>
 </ul>
 <p>文件上传使用了一个开源的jQuery文件上传插件，可以在common.js里面修改上传文件的参数，包括上传个数，支持的文件类型等，配置信息如下：</p>
-<pre><code>url:&quot;file/upload&quot;,
-maxFileCount: 5,                //上传文件个数（多个时修改此处
-returnType: &apos;json&apos;,              //服务返回数据
-allowedTypes: &apos;doc,docx,excel,sql,txt,ppt,pdf&apos;,  //允许上传的文件式
-showDone: false,                     //是否显示&quot;Done&quot;(完成)按钮
-showDelete: true,                  //是否显示&quot;Delete&quot;(删除)按钮
-</code></pre><p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2596%2587%25E4%25BB%25B6%25E4%25B8%258A%25E4%25BC%25A0.png" alt="文件上传"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">url:<span class="string">"file/upload"</span>,</span><br><span class="line">maxFileCount: 5,                //上传文件个数（多个时修改此处</span><br><span class="line">   <span class="built_in">return</span>Type: <span class="string">'json'</span>,              //服务返回数据</span><br><span class="line">   allowedTypes: <span class="string">'doc,docx,excel,sql,txt,ppt,pdf'</span>,  //允许上传的文件式</span><br><span class="line">   showDone: <span class="literal">false</span>,                     //是否显示<span class="string">"Done"</span>(完成)按钮</span><br><span class="line">   showDelete: <span class="literal">true</span>,                  //是否显示<span class="string">"Delete"</span>(删除)按钮</span><br></pre></td></tr></table></figure>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E6%2596%2587%25E4%25BB%25B6%25E4%25B8%258A%25E4%25BC%25A0.png" alt="文件上传"></p>
 <ul>
 <li><strong>富文本编辑</strong></li>
 </ul>
@@ -331,57 +326,12 @@ showDelete: true,                  //是否显示&quot;Delete&quot;(删除)按�
 <li><strong>session过期跳转登录</strong></li>
 </ul>
 <p>用户登录后，会建立相应的session，系统默认过期时间为10分钟，若需更改，可在applicationContext-shiro.xml配置文件中，更改如下配置。</p>
-<pre><code>&lt;!-- 会话管理器 --&gt;
-&lt;bean id=&quot;sessionManager&quot; class=&quot;org.apache.shiro.web.session.mgt.DefaultWebSessionManager&quot;&gt;
-    &lt;!-- session的失效时长，单位毫秒 ，这里设置为10分钟--&gt;
-    &lt;property name=&quot;globalSessionTimeout&quot; value=&quot;600000&quot;/&gt;
-    &lt;!-- 删除失效的session --&gt;
-    &lt;property name=&quot;deleteInvalidSessions&quot; value=&quot;true&quot;/&gt;
-    &lt;!-- 指定本系统sessionId, 默认为: JSESSIONID 问题: 与Servlet容器名冲突, 如Jetty, Tomcat等默认JSESSIONID,
-        当跳出shiro Servlet时如Error-page容器会为JSESSIONID重新分配值导致登录会话丢失! --&gt;
-    &lt;property name=&quot;sessionIdCookie&quot; ref=&quot;sessionIdCookie&quot;/&gt;
-&lt;/bean&gt;
-</code></pre><p>若session过期，则应跳转登录界面重新登录。系统采用的方式是设置一个sessionfilter，如下：</p>
-<pre><code>public class SessionFilter implements Filter {
-
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException,
-            ServletException {
-
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        if (!SecurityUtils.getSubject().isAuthenticated()) {
-            //判断session里是否有用户信息,且是否为ajax请求，如果是ajax请求响应头会有，x-requested-with
-            if (request.getHeader(&quot;x-requested-with&quot;) != null
-                    &amp;&amp; request.getHeader(&quot;x-requested-with&quot;).equalsIgnoreCase(&quot;XMLHttpRequest&quot;)) {
-                response.setHeader(&quot;session-status&quot;, &quot;timeout&quot;);//在响应头设置session状态
-            }
-        }
-        filterChain.doFilter(request, servletResponse);
-    }
-
-    @Override
-    public void destroy() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void init(FilterConfig arg0) throws ServletException {
-        // TODO Auto-generated method stub
-    }
-}
-</code></pre><p>并在web.xml中配置该filter。当session过期时， 在响应头设置session状态为timeout，然后采用全局的ajax事件对session状态进行判断，跳转到登录页面。该事件定义在common.js中，如下：</p>
-<pre><code>//全局ajax事件，处理session过期跳转登录
-$.ajaxSetup({
-    complete:function(XMLHttpRequest,sessionStatus){
-        var sessionstatus = XMLHttpRequest.getResponseHeader(&quot;session-status&quot;);
-        if(sessionstatus==&quot;timeout&quot;){
-             $.messager.alert(&apos;提示信息&apos;, &quot;登录超时！请重新登录！&quot;, &apos;info&apos;,function(){
-                 window.location.href = &apos;login&apos;;
-             });
-        } 
-    }
-});
-</code></pre><p>关于这部分的详细内容请参考我的一篇博客：<a href="http://www.realfond.cn/2017/05/29/%E5%88%A9%E7%94%A8filter%E5%92%8C%E5%85%A8%E5%B1%80ajax%E4%BA%8B%E4%BB%B6%E5%AE%9E%E7%8E%B0shiro%20session%E8%BF%87%E6%9C%9F%E7%99%BB%E5%BD%95%E8%B7%B3%E8%BD%AC/" title="博客地址" target="_blank" rel="external">http://www.realfond.cn/2017/05/29/%E5%88%A9%E7%94%A8filter%E5%92%8C%E5%85%A8%E5%B1%80ajax%E4%BA%8B%E4%BB%B6%E5%AE%9E%E7%8E%B0shiro%20session%E8%BF%87%E6%9C%9F%E7%99%BB%E5%BD%95%E8%B7%B3%E8%BD%AC/</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 会话管理器 --&gt;</span><br><span class="line">   &lt;bean id=<span class="string">"sessionManager"</span> class=<span class="string">"org.apache.shiro.web.session.mgt.DefaultWebSessionManager"</span>&gt;</span><br><span class="line">       &lt;!-- session的失效时长，单位毫秒 ，这里设置为10分钟--&gt;</span><br><span class="line">       &lt;property name=<span class="string">"globalSessionTimeout"</span> value=<span class="string">"600000"</span>/&gt;</span><br><span class="line">       &lt;!-- 删除失效的session --&gt;</span><br><span class="line">       &lt;property name=<span class="string">"deleteInvalidSessions"</span> value=<span class="string">"true"</span>/&gt;</span><br><span class="line">       &lt;!-- 指定本系统sessionId, 默认为: JSESSIONID 问题: 与Servlet容器名冲突, 如Jetty, Tomcat等默认JSESSIONID,</span><br><span class="line">       	当跳出shiro Servlet时如Error-page容器会为JSESSIONID重新分配值导致登录会话丢失! --&gt;</span><br><span class="line">       &lt;property name=<span class="string">"sessionIdCookie"</span> ref=<span class="string">"sessionIdCookie"</span>/&gt;</span><br><span class="line">   &lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>若session过期，则应跳转登录界面重新登录。系统采用的方式是设置一个sessionfilter，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="keyword">throws</span> IOException,</span><br><span class="line">            ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">        HttpServletRequest request = (HttpServletRequest) servletRequest;</span><br><span class="line">        HttpServletResponse response = (HttpServletResponse) servletResponse;</span><br><span class="line">        <span class="keyword">if</span> (!SecurityUtils.getSubject().isAuthenticated()) &#123;</span><br><span class="line">            <span class="comment">//判断session里是否有用户信息,且是否为ajax请求，如果是ajax请求响应头会有，x-requested-with</span></span><br><span class="line">            <span class="keyword">if</span> (request.getHeader(<span class="string">"x-requested-with"</span>) != <span class="keyword">null</span></span><br><span class="line">                    &amp;&amp; request.getHeader(<span class="string">"x-requested-with"</span>).equalsIgnoreCase(<span class="string">"XMLHttpRequest"</span>)) &#123;</span><br><span class="line">                response.setHeader(<span class="string">"session-status"</span>, <span class="string">"timeout"</span>);<span class="comment">//在响应头设置session状态</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        filterChain.doFilter(request, servletResponse);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig arg0)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>并在web.xml中配置该filter。当session过期时， 在响应头设置session状态为timeout，然后采用全局的ajax事件对session状态进行判断，跳转到登录页面。该事件定义在common.js中，如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//全局ajax事件，处理session过期跳转登录</span><br><span class="line">$.ajaxSetup(&#123;</span><br><span class="line">	complete:<span class="keyword">function</span>(XMLHttpRequest,sessionStatus)&#123;</span><br><span class="line">		var sessionstatus = XMLHttpRequest.getResponseHeader(<span class="string">"session-status"</span>);</span><br><span class="line">		<span class="keyword">if</span>(sessionstatus==<span class="string">"timeout"</span>)&#123;</span><br><span class="line">		     $.messager.alert(<span class="string">'提示信息'</span>, <span class="string">"登录超时！请重新登录！"</span>, <span class="string">'info'</span>,<span class="function"><span class="title">function</span></span>()&#123;</span><br><span class="line">		         window.location.href = <span class="string">'login'</span>;</span><br><span class="line">		     &#125;);</span><br><span class="line">		&#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>关于这部分的详细内容请参考我的一篇博客：<a href="http://www.realfond.cn/2017/05/29/%E5%88%A9%E7%94%A8filter%E5%92%8C%E5%85%A8%E5%B1%80ajax%E4%BA%8B%E4%BB%B6%E5%AE%9E%E7%8E%B0shiro%20session%E8%BF%87%E6%9C%9F%E7%99%BB%E5%BD%95%E8%B7%B3%E8%BD%AC/" title="博客地址" target="_blank" rel="external">http://www.realfond.cn/2017/05/29/%E5%88%A9%E7%94%A8filter%E5%92%8C%E5%85%A8%E5%B1%80ajax%E4%BA%8B%E4%BB%B6%E5%AE%9E%E7%8E%B0shiro%20session%E8%BF%87%E6%9C%9F%E7%99%BB%E5%BD%95%E8%B7%B3%E8%BD%AC/</a></p>
 <p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/session%25E8%25BF%2587%25E6%259C%259F%25E8%25B7%25B3%25E8%25BD%25AC%25E7%2599%25BB%25E5%25BD%2595.png" alt="https://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/session%25E8%25BF%2587%25E6%259C%259F%25E8%25B7%25B3%25E8%25BD%25AC%25E7%2599%25BB%25E5%25BD%2595.png"></p>
 <ul>
 <li><strong>动态权限控制</strong></li>
@@ -393,26 +343,27 @@ $.ajaxSetup({
 <p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/pm_image/%25E5%258A%25A8%25E6%2580%2581%25E6%259D%2583%25E9%2599%2590%25E6%258E%25A7%25E5%2588%25B6.png" alt="动态权限控制"></p>
 <h2 id="注："><a href="#注：" class="headerlink" title="注："></a>注：</h2><p><strong>文件上传配置</strong></p>
 <p>在本地建立上传图片和文件的文件夹，如我的存放路径是在D:\upload\temp\img，D:\upload\temp\file文件夹下，然后修改tomcat的配置文件server.xml，添加虚拟路径，将对图片和文件的请求url映射到本机硬盘的相应路径，如下：</p>
-<pre><code>&lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;
-        unpackWARs=&quot;true&quot; autoDeploy=&quot;true&quot;&gt;
+<pre><code class="bash">&lt;Host name=<span class="string">"localhost"</span>  appBase=<span class="string">"webapps"</span>
+        unpackWARs=<span class="string">"true"</span> autoDeploy=<span class="string">"true"</span>&gt;
     &lt;!-- SingleSignOn valve, share authentication between web applications
          Documentation at: /docs/config/valve.html --&gt;
     &lt;!--
-    &lt;Valve className=&quot;org.apache.catalina.authenticator.SingleSignOn&quot; /&gt;
+    &lt;Valve className=<span class="string">"org.apache.catalina.authenticator.SingleSignOn"</span> /&gt;
     --&gt;
 
-    &lt;!-- Access log processes all example.
+    &lt;!-- Access <span class="built_in">log</span> processes all example.
          Documentation at: /docs/config/valve.html
-         Note: The pattern used is equivalent to using pattern=&quot;common&quot; --&gt;
-    &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; directory=&quot;logs&quot;
-           prefix=&quot;localhost_access_log&quot; suffix=&quot;.txt&quot;
-           pattern=&quot;%h %l %u %t &amp;quot;%r&amp;quot; %s %b&quot; /&gt;
+         Note: The pattern used is equivalent to using pattern=<span class="string">"common"</span> --&gt;
+    &lt;Valve className=<span class="string">"org.apache.catalina.valves.AccessLogValve"</span> directory=<span class="string">"logs"</span>
+           prefix=<span class="string">"localhost_access_log"</span> suffix=<span class="string">".txt"</span>
+           pattern=<span class="string">"%h %l %u %t &amp;quot;%r&amp;quot; %s %b"</span> /&gt;
 
     &lt;!-- 在Host标签下添加下面两行，配置虚拟路径到你本机的文件夹 --&gt;
-    &lt;Context path=&quot;/pic&quot; docBase=&quot;D:\upload\temp\img&quot; crossContext=&quot;true&quot; trusted=&quot;true&quot; reloadable=&quot;true&quot;/&gt;
-    &lt;Context path=&quot;/file&quot; docBase=&quot;D:\upload\temp\file&quot; crossContext=&quot;true&quot; trusted=&quot;true&quot; reloadable=&quot;true&quot;/&gt;
+    &lt;Context path=<span class="string">"/pic"</span> docBase=<span class="string">"D:\upload\temp\img"</span> crossContext=<span class="string">"true"</span> trusted=<span class="string">"true"</span> reloadable=<span class="string">"true"</span>/&gt;
+    &lt;Context path=<span class="string">"/file"</span> docBase=<span class="string">"D:\upload\temp\file"</span> crossContext=<span class="string">"true"</span> trusted=<span class="string">"true"</span> reloadable=<span class="string">"true"</span>/&gt;
 &lt;/Host&gt;
-</code></pre><p><strong>idea classpath配置</strong></p>
+</code></pre>
+<p><strong>idea classpath配置</strong></p>
 <p>idea引入项目后，resources目录在eclipse中是在classpath下的，而在idea中变成在classpath外，导致项目无法识别配置文件。解决办法是把resources文件夹加入到classpath中，请参照此博文操作：<a href="http://blog.csdn.net/kesarchen/article/details/51193657" target="_blank" rel="external">http://blog.csdn.net/kesarchen/article/details/51193657</a></p>
 
       
