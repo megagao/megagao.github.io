@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>导入production_ssm到STS | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="感谢以为韩国的网友给我发的邮件，介绍了将production_ssm导入到STS中，并将详细过程与注意事项完整记录了下来。非常感谢他的文档，也为STS的使用提供了参考。
+Import production_ssm into STS - I am glad to have a successful result.I cloned production_ssm from gitHub and impo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导入production_ssm到STS">
+<meta property="og:url" content="http://realfond.cn/2017/06/06/导入production_ssm到STS/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="感谢以为韩国的网友给我发的邮件，介绍了将production_ssm导入到STS中，并将详细过程与注意事项完整记录了下来。非常感谢他的文档，也为STS的使用提供了参考。
+Import production_ssm into STS - I am glad to have a successful result.I cloned production_ssm from gitHub and impo">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/1.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/2.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/3.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/4.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/5.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/6.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/61.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/7.jpg">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/8.jpg">
+<meta property="og:updated_time" content="2017-06-06T12:03:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="导入production_ssm到STS">
+<meta name="twitter:description" content="感谢以为韩国的网友给我发的邮件，介绍了将production_ssm导入到STS中，并将详细过程与注意事项完整记录了下来。非常感谢他的文档，也为STS的使用提供了参考。
+Import production_ssm into STS - I am glad to have a successful result.I cloned production_ssm from gitHub and impo">
+<meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/1.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>Über</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-导入production_ssm到STS" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/06/06/导入production_ssm到STS/" class="article-date">
+  	<time datetime="2017-06-06T11:43:54.000Z" itemprop="datePublished">2017-06-06</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      导入production_ssm到STS
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>感谢以为韩国的网友给我发的邮件，介绍了将production_ssm导入到STS中，并将详细过程与注意事项完整记录了下来。非常感谢他的文档，也为STS的使用提供了参考。</p>
+<h2 id="Import-production-ssm-into-STS-I-am-glad-to-have-a-successful-result"><a href="#Import-production-ssm-into-STS-I-am-glad-to-have-a-successful-result" class="headerlink" title="Import production_ssm into STS - I am glad to have a successful result."></a>Import production_ssm into STS - I am glad to have a successful result.</h2><p>I cloned production_ssm from gitHub and imported it into STS. </p>
+<p>I screened the process as picture files.<br> <a id="more"></a></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/1.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/2.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/3.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/4.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/5.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/6.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/61.jpg" alt=""></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/7.jpg" alt=""></p>
+<p>Error occurred during Run on Server</p>
+<pre><code>6월 06, 2017 8:45:36 오전 org.apache.tomcat.util.digester.SetPropertiesRule begin
+경고: [SetPropertiesRule]{Server/Service/Engine/Host/Context} Setting property &apos;source&apos; to &apos;org.eclipse.jst.jee.server:production_ssm&apos; did not find a matching property.
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Server version:        Apache Tomcat/8.5.9
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Server built:          Dec 5 2016 20:18:12 UTC
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Server number:         8.5.9.0
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: OS Name:               Windows 10
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: OS Version:            10.0
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Architecture:          amd64
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Java Home:             C:\Program Files\Java\jdk1.8.0_121\jre
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: JVM Version:           1.8.0_121-b13
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: JVM Vendor:            Oracle Corporation
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: CATALINA_BASE:         C:\dev_spring_n\work\.metadata\.plugins\org.eclipse.wst.server.core\tmp0
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: CATALINA_HOME:         C:\dev_spring_n\apache-tomcat-8.5.9
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Command line argument: -Dcatalina.base=C:\dev_spring_n\work\.metadata\.plugins\org.eclipse.wst.server.core\tmp0
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Command line argument: -Dcatalina.home=C:\dev_spring_n\apache-tomcat-8.5.9
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Command line argument: -Dwtp.deploy=C:\dev_spring_n\work\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Command line argument: -Djava.endorsed.dirs=C:\dev_spring_n\apache-tomcat-8.5.9\endorsed
+6월 06, 2017 8:45:36 오전 org.apache.catalina.startup.VersionLoggerListener log
+정보: Command line argument: -Dfile.encoding=UTF-8
+6월 06, 2017 8:45:36 오전 org.apache.catalina.core.AprLifecycleListener lifecycleEvent
+정보: Loaded APR based Apache Tomcat Native library 1.2.10 using APR version 1.5.2.
+6월 06, 2017 8:45:36 오전 org.apache.catalina.core.AprLifecycleListener lifecycleEvent
+정보: APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+6월 06, 2017 8:45:36 오전 org.apache.catalina.core.AprLifecycleListener lifecycleEvent
+정보: APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+6월 06, 2017 8:45:37 오전 org.apache.catalina.core.AprLifecycleListener initializeSSL
+정보: OpenSSL successfully initialized (OpenSSL 1.0.2j  26 Sep 2016)
+6월 06, 2017 8:45:38 오전 org.apache.coyote.AbstractProtocol init
+정보: Initializing ProtocolHandler [&quot;http-nio-9081&quot;]
+6월 06, 2017 8:45:38 오전 org.apache.tomcat.util.net.NioSelectorPool getSharedSelector
+정보: Using a shared selector for servlet write/read
+6월 06, 2017 8:45:38 오전 org.apache.coyote.AbstractProtocol init
+정보: Initializing ProtocolHandler [&quot;ajp-nio-9010&quot;]
+6월 06, 2017 8:45:38 오전 org.apache.tomcat.util.net.NioSelectorPool getSharedSelector
+정보: Using a shared selector for servlet write/read
+6월 06, 2017 8:45:38 오전 org.apache.catalina.startup.Catalina load
+정보: Initialization processed in 2902 ms
+6월 06, 2017 8:45:38 오전 org.apache.catalina.core.StandardService startInternal
+정보: Starting service Catalina
+6월 06, 2017 8:45:38 오전 org.apache.catalina.core.StandardEngine startInternal
+정보: Starting Servlet Engine: Apache Tomcat/8.5.9
+6월 06, 2017 8:45:46 오전 org.apache.jasper.servlet.TldScanner scanJars
+정보: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.ApplicationContext log
+정보: No Spring WebApplicationInitializer types detected on classpath
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.ApplicationContext log
+정보: Initializing Spring root WebApplicationContext
+log4j:WARN No appenders could be found for logger (org.springframework.web.context.ContextLoader).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.StandardContext listenerStart
+심각: Exception sending context initialized event to listener instance of class org.springframework.web.context.ContextLoaderListener
+org.springframework.beans.factory.BeanDefinitionStoreException: Could not resolve bean definition resource pattern [classpath:spring/applicationContext-*.xml]; nested exception is java.io.FileNotFoundException: class path resource [spring/] cannot be resolved to URL because it does not exist
+ at org.springframework.beans.factory.support.AbstractBeanDefinitionReader.loadBeanDefinitions(AbstractBeanDefinitionReader.java:229)
+ at org.springframework.beans.factory.support.AbstractBeanDefinitionReader.loadBeanDefinitions(AbstractBeanDefinitionReader.java:188)
+ at org.springframework.web.context.support.XmlWebApplicationContext.loadBeanDefinitions(XmlWebApplicationContext.java:125)
+ at org.springframework.web.context.support.XmlWebApplicationContext.loadBeanDefinitions(XmlWebApplicationContext.java:94)
+ at org.springframework.context.support.AbstractRefreshableApplicationContext.refreshBeanFactory(AbstractRefreshableApplicationContext.java:129)
+ at org.springframework.context.support.AbstractApplicationContext.obtainFreshBeanFactory(AbstractApplicationContext.java:537)
+ at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:452)
+ at org.springframework.web.context.ContextLoader.configureAndRefreshWebApplicationContext(ContextLoader.java:403)
+ at org.springframework.web.context.ContextLoader.initWebApplicationContext(ContextLoader.java:306)
+ at org.springframework.web.context.ContextLoaderListener.contextInitialized(ContextLoaderListener.java:106)
+ at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:4727)
+ at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5189)
+ at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+ at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1419)
+ at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1409)
+ at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+ at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+ at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+ at java.lang.Thread.run(Thread.java:745)
+Caused by: java.io.FileNotFoundException: class path resource [spring/] cannot be resolved to URL because it does not exist
+ at org.springframework.core.io.ClassPathResource.getURL(ClassPathResource.java:187)
+ at org.springframework.core.io.support.PathMatchingResourcePatternResolver.findPathMatchingResources(PathMatchingResourcePatternResolver.java:412)
+ at org.springframework.core.io.support.PathMatchingResourcePatternResolver.getResources(PathMatchingResourcePatternResolver.java:286)
+ at org.springframework.context.support.AbstractApplicationContext.getResources(AbstractApplicationContext.java:1159)
+ at org.springframework.beans.factory.support.AbstractBeanDefinitionReader.loadBeanDefinitions(AbstractBeanDefinitionReader.java:216)
+ ... 18 more
+
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.StandardContext startInternal
+심각: One or more listeners failed to start. Full details will be found in the appropriate container log file
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.StandardContext startInternal
+심각: Context [/production_ms] startup failed due to previous errors
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.ApplicationContext log
+정보: Closing Spring root WebApplicationContext
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.StandardContext listenerStop
+심각: Exception sending context destroyed event to listener instance of class org.springframework.web.context.ContextLoaderListener
+java.lang.IllegalStateException: BeanFactory not initialized or already closed - call &apos;refresh&apos; before accessing beans via the ApplicationContext
+ at org.springframework.context.support.AbstractRefreshableApplicationContext.getBeanFactory(AbstractRefreshableApplicationContext.java:170)
+ at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:908)
+ at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:884)
+ at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:836)
+ at org.springframework.web.context.ContextLoader.closeWebApplicationContext(ContextLoader.java:579)
+ at org.springframework.web.context.ContextLoaderListener.contextDestroyed(ContextLoaderListener.java:115)
+ at org.apache.catalina.core.StandardContext.listenerStop(StandardContext.java:4774)
+ at org.apache.catalina.core.StandardContext.stopInternal(StandardContext.java:5411)
+ at org.apache.catalina.util.LifecycleBase.stop(LifecycleBase.java:226)
+ at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:154)
+ at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1419)
+ at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1409)
+ at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+ at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+ at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+ at java.lang.Thread.run(Thread.java:745)
+
+6월 06, 2017 8:45:46 오전 org.apache.coyote.AbstractProtocol start
+정보: Starting ProtocolHandler [http-nio-9081]
+6월 06, 2017 8:45:47 오전 org.apache.coyote.AbstractProtocol start
+정보: Starting ProtocolHandler [ajp-nio-9010]
+6월 06, 2017 8:45:47 오전 org.apache.catalina.startup.Catalina start
+정보: Server startup in 8373 ms
+
+
+
+...
+</code></pre><p>Error Contents:</p>
+<pre><code>6월 06, 2017 8:45:46 오전 org.apache.catalina.core.ApplicationContext log
+정보: No Spring WebApplicationInitializer types detected on classpath
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.ApplicationContext log
+정보: Initializing Spring root WebApplicationContext
+log4j:WARN No appenders could be found for logger (org.springframework.web.context.ContextLoader).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+6월 06, 2017 8:45:46 오전 org.apache.catalina.core.StandardContext listenerStart
+심각: Exception sending context initialized event to listener instance of class 
+org.springframework.web.context.ContextLoaderListener
+org.springframework.beans.factory.BeanDefinitionStoreException: 
+Could not resolve bean definition resource pattern [classpath:spring/applicationContext-*.xml]; 
+nested exception is java.io.FileNotFoundException: 
+class path resource [spring/] cannot be resolved to URL because it does not exist. 
+
+
+
+...
+</code></pre><p>I added src / main / resources folder to classpath to solve the error.</p>
+<p>Select the project and right click &gt; Build Path - Configure Build Path Click&gt; Java Build Path - Add Folder Click&gt; Source Folder Selection - resources folder Check - OK Click </p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/image2/8.jpg" alt=""></p>
+<p>– Must be linked with DB to match src/main/resources/jdbc.properties file<br>jdbc.driverClassName=com.mysql.jdbc.Driver<br>jdbc.url=jdbc\:mysql\://localhost\:3306/production_ssm<br>jdbc.username=root<br>jdbc.password=1234</p>
+<p>– Run a successful web server<br>Finally, the web server normally loads and runs the production_ssm project.</p>
+<p><strong>– PreCautions:</strong><br>I initially thought the web server would work well<br>when the Logger record was shown in the console window.<br>If the process of linking DB is not done, the web server does not operate normally.</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/05/29/利用filter和全局ajax事件实现shiro session过期登录跳转/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">利用filter和全局ajax事件实现shiro session过期登录跳转</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="导入production_ssm到STS" data-title="导入production_ssm到STS" data-url="http://realfond.cn/2017/06/06/导入production_ssm到STS/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
