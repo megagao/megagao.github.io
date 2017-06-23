@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://realfond.cn/2017/04/18/单例的五种写法/index.html">
 <meta property="og:site_name" content="megagao">
 <meta property="og:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
-<meta property="og:updated_time" content="2017-05-07T03:16:35.000Z">
+<meta property="og:updated_time" content="2017-06-23T11:49:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单例的五种写法">
 <meta name="twitter:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
@@ -237,6 +237,7 @@
 <p><strong>线程不安全：</strong></p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
     <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;  
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
 
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>{  
@@ -251,12 +252,14 @@
 <p><strong>线程安全：</strong></p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
     <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;  
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
+
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>{  
-    <span class="keyword">if</span> (instance == <span class="keyword">null</span>) {  
-        instance = <span class="keyword">new</span> Singleton();  
-    }  
-    <span class="keyword">return</span> instance;  
+        <span class="keyword">if</span>(instance == <span class="keyword">null</span>) {  
+            instance = <span class="keyword">new</span> Singleton();  
+        }  
+        <span class="keyword">return</span> instance;  
     }  
 }
 </code></pre>
@@ -265,9 +268,11 @@
 <p><strong>通过静态变量初始化</strong></p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
     <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();  
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
+
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>{  
-    <span class="keyword">return</span> instance;  
+       <span class="keyword">return</span> instance;  
     }  
 }
 </code></pre>
@@ -275,20 +280,24 @@
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
     <span class="keyword">private</span> Singleton instance = <span class="keyword">null</span>;  
     <span class="keyword">static</span> {  
-    instance = <span class="keyword">new</span> Singleton();  
+       instance = <span class="keyword">new</span> Singleton();  
     }  
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
+
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>{  
-    <span class="keyword">return</span> <span class="keyword">this</span>.instance;  
+       <span class="keyword">return</span> <span class="keyword">this</span>.instance;  
     }  
 }
 </code></pre>
 <h2 id="三、静态内部类"><a href="#三、静态内部类" class="headerlink" title="三、静态内部类"></a>三、静态内部类</h2><p>这种方式同样利用了classloder的机制来保证初始化instance时只有一个线程，它跟第二种方式不同的是（很细微的差别）：第二种方式是只要Singleton类被装载了，那么instance就会被实例化（没有达到lazy loading效果），而这种方式是Singleton类被装载了，instance不一定被初始化。因为SingletonHolder类没有被主动使用，只有显示通过调用getInstance方法时，才会显示装载SingletonHolder类，从而实例化instance。想象一下，如果实例化instance很消耗资源，我想让他延迟加载，另外一方面，我不希望在Singleton类加载时就实例化，因为我不能确保Singleton类还可能在其他的地方被主动使用从而被加载，那么这个时候实例化instance显然是不合适的。这个时候，这种方式相比第三和第四种方式就显得很合理。</p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
     <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>{  
-    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();  
+       <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();  
     }  
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
+
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>{  
     <span class="keyword">return</span> SingletonHolder.INSTANCE;  
     }  
@@ -303,23 +312,24 @@
 </code></pre>
 <h2 id="五、双重校验锁"><a href="#五、双重校验锁" class="headerlink" title="五、双重校验锁"></a>五、双重校验锁</h2><p>这个是对懒汉模式线程安全方式的升级版，俗称双重检查锁定，降低了锁的粒度，可以提高并发度。详细介绍请查看：<br><a href="http://www.ibm.com/developerworks/cn/java/j-dcl.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/java/j-dcl.html</a><br>在JDK1.5之后，双重检查锁定才能够正常达到单例效果。</p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>{  
-    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;  
+    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton; 
+
     <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span> <span class="params">()</span></span>{}  
+
     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>{  
-    <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) {  
-        <span class="keyword">synchronized</span> (Singleton.class) {  
-        <span class="keyword">if</span> (singleton == <span class="keyword">null</span>) {  
-            singleton = <span class="keyword">new</span> Singleton();  
+        <span class="keyword">if</span>(singleton == <span class="keyword">null</span>) {  
+            <span class="keyword">synchronized</span> (Singleton.class) {  
+                <span class="keyword">if</span>(singleton == <span class="keyword">null</span>) {  
+                    singleton = <span class="keyword">new</span> Singleton();  
+                }  
+            }  
         }  
-        }  
-    }  
-    <span class="keyword">return</span> singleton;  
+        <span class="keyword">return</span> singleton;  
     }  
 }
 </code></pre>
 <p>总结<br>有两个问题需要注意：<br>1.如果单例由不同的类装载器装入，那便有可能存在多个单例类的实例。假定不是远端存取，例如一些servlet容器对每个servlet使用完全不同的类装载器，这样的话如果有两个servlet访问一个单例类，它们就都会有各自的实例。<br>2.如果Singleton实现了java.io.Serializable接口，那么这个类的实例就可能被序列化和复原。不管怎样，如果你序列化一个单例类的对象，接下来复原多个那个对象，那你就会有多个单例类的实例。<br>对第一个问题修复的办法是：</p>
-<pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Class <span class="title">getClass</span><span class="params">(String classname)</span>      
-                                         <span class="keyword">throws</span> ClassNotFoundException </span>{     
+<pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Class <span class="title">getClass</span><span class="params">(String classname)</span> <span class="keyword">throws</span> ClassNotFoundException </span>{     
       ClassLoader classLoader = Thread.currentThread().getContextClassLoader();     
 
       <span class="keyword">if</span>(classLoader == <span class="keyword">null</span>)     
@@ -335,6 +345,7 @@
 
        <span class="function"><span class="keyword">protected</span> <span class="title">Singleton</span><span class="params">()</span> </span>{ 
     }     
+
        <span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> </span>{     
            <span class="keyword">return</span> INSTANCE;     
        }    
