@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://realfond.cn/2017/04/18/单例的五种写法/index.html">
 <meta property="og:site_name" content="megagao">
 <meta property="og:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
-<meta property="og:updated_time" content="2017-06-23T11:54:10.000Z">
+<meta property="og:updated_time" content="2017-06-23T11:58:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单例的五种写法">
 <meta name="twitter:description" content="一般来说，单例有五种写法，分别是懒汉，饿汉，双重校验锁，枚举和静态内部类。本文是在参考以下博客基础上写的：http://cantellow.iteye.com/blog/838473http://blog.csdn.net/mixiuali/article/details/8107286http://blog.csdn.net/jason0539/article/details/23297037/">
@@ -332,25 +332,24 @@
 <p>总结<br>有两个问题需要注意：<br>1.如果单例由不同的类装载器装入，那便有可能存在多个单例类的实例。假定不是远端存取，例如一些servlet容器对每个servlet使用完全不同的类装载器，这样的话如果有两个servlet访问一个单例类，它们就都会有各自的实例。<br>2.如果Singleton实现了java.io.Serializable接口，那么这个类的实例就可能被序列化和复原。不管怎样，如果你序列化一个单例类的对象，接下来复原多个那个对象，那你就会有多个单例类的实例。<br>对第一个问题修复的办法是：</p>
 <pre><code class="java"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Class <span class="title">getClass</span><span class="params">(String classname)</span> <span class="keyword">throws</span> ClassNotFoundException </span>{ 
 
-      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();     
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();     
 
-      <span class="keyword">if</span>(classLoader == <span class="keyword">null</span>)     
-         classLoader = Singleton.class.getClassLoader();     
+    <span class="keyword">if</span>(classLoader == <span class="keyword">null</span>)     
+        classLoader = Singleton.class.getClassLoader();     
 
-      <span class="keyword">return</span> (classLoader.loadClass(classname));     
-   }     
+    <span class="keyword">return</span> (classLoader.loadClass(classname));     
 }
 </code></pre>
 <p> 对第二个问题修复的办法是：</p>
 <pre><code class="java"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>{     
-       <span class="keyword">public</span> <span class="keyword">static</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();     
+    <span class="keyword">public</span> <span class="keyword">static</span> Singleton INSTANCE = <span class="keyword">new</span> Singleton();     
 
-       <span class="function"><span class="keyword">protected</span> <span class="title">Singleton</span><span class="params">()</span> </span>{ 
+    <span class="function"><span class="keyword">protected</span> <span class="title">Singleton</span><span class="params">()</span> </span>{ 
     }     
 
-       <span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> </span>{     
-           <span class="keyword">return</span> INSTANCE;     
-       }    
+    <span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> </span>{     
+        <span class="keyword">return</span> INSTANCE;     
+    }    
 }
 </code></pre>
 
