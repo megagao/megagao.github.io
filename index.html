@@ -77,7 +77,7 @@
 						<li>Links</li>
 						
 						
-						<li>About</li>
+						<li>Über</li>
 						
 					</ul>
 				</div>
@@ -223,7 +223,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="LTS-light-task-scheduler"><a href="#LTS-light-task-scheduler" class="headerlink" title="LTS(light-task-scheduler)"></a>LTS(light-task-scheduler)</h1><hr>
-<p>由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
+<p>由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
 <p>LTS(light-task-scheduler)是一个分布式任务调度的框架，属于淘宝员工的个人开源。它支持实时任务，定时任务，Cron任务，Repeat任务，有较好的伸缩性、扩展性、健壮稳定性因而被多家公司使用。他其构参考了dubbo和hadoop的设计，上手较为方便；同时，针对我们的前述需求，也都能很好解决，因此最终选用LTS。</p>
 <h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ol>
 <li>支持分布式，解决多点故障，支持动态扩容，容错重试等</li>
