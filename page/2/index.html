@@ -196,6 +196,67 @@
 
       <div class="body-wrap">
   
+    <article id="post-JVM类加载机制（1）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/08/JVM类加载机制（1）/" class="article-date">
+  	<time datetime="2016-06-08T05:24:58.000Z" itemprop="datePublished">2016-06-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/06/08/JVM类加载机制（1）/">JVM类加载机制（1）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>众所周知，平台无关性是Java语言的一个非常大的特性，在Java刚刚诞生之时，Sun公司就提出“write once， run anywhere”的口号，这也是Java最初引人关注的原因之一。这个特性是依靠JVM来实现的,其他语言（如C/CPP）是直接将源文件编译成二进制本地机器码，直接由相关的平台来执行这些机器指令；Java则是先将.java文件编译成虚拟机可以执行的.class文件，然后再由虚拟机针对特定的平台进行处理。</p>
+<p>事实上，JVM的这一特性还能实现<em>语言无关性</em>，而且语言无关性的优势甚至会在将来超越平台无关性。语言无关性是指JVM不和包括Java在内的任何语言绑定，它只与.class文件这种特定的二进制文件格式所关联。也就是说，无论什么语言写的程序，只要能将其编译成.class文件，甚至直接用十六进制编辑器直接产生的class文件，只要符合class文件的格式要求，那么就可以被JVM所执行。比如现在有的Jython，Jruby等等，这样的好处是让其他语言也可以使用强大的JVM。
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2016/06/08/JVM类加载机制（1）/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-Java内存泄漏" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -776,72 +837,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/03/24/阿里感悟——如何才能加入阿里？/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-ThreadLocal使用" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/03/22/ThreadLocal使用/" class="article-date">
-  	<time datetime="2016-03-22T12:54:33.000Z" itemprop="datePublished">2016-03-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/03/22/ThreadLocal使用/">ThreadLocal使用</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>ThreadLocal的官方API解释为：</p>
-<p>“该类提供了线程局部 (thread-local) 变量。这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。”</p>
-<p>大概的意思有两点：</p>
-<blockquote>
-<p>ThreadLocal提供了一种访问某个变量的特殊方式：访问到的变量属于当前线程，即保证每个线程的变量不一样，而同一个线程在任何地方拿到的变量都是一致的，这就是所谓的线程隔离。<br>   </br>如果要使用ThreadLocal，通常定义为private static类型，在我看来最好是定义为private static final类型。</p>
-</blockquote>
-<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>ThreadLocal通常用来共享数据，当你想在多个方法中使用某个变量，这个变量是当前线程的状态，其它线程不依赖这个变量，你第一时间想到的就是把变量定义在方法内部，然后再方法之间传递参数来使用，这个方法能解决问题，但是有个烦人的地方就是，每个方法都需要声明形参，多处声明，多处调用。影响代码的美观和维护。有没有一种方法能将变量像private static形式来访问呢？这样在类的任何一处地方就都能使用。这个时候ThreadLocal大显身手了。
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/03/22/ThreadLocal使用/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
