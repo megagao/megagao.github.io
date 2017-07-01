@@ -6,20 +6,23 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>分布式任务调度LTS（1）-简介 | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#LTS(light-task-scheduler)由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+  <meta name="description" content="LTS(light-task-scheduler)
+由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(light-task-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式任务调度LTS（1）-简介">
 <meta property="og:url" content="http://realfond.cn/2017/06/15/分布式任务调度LTS（1）-简介/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description" content="#LTS(light-task-scheduler)由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+<meta property="og:description" content="LTS(light-task-scheduler)
+由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(light-task-">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png">
-<meta property="og:updated_time" content="2017-07-01T08:32:06.000Z">
+<meta property="og:updated_time" content="2017-07-01T08:36:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式任务调度LTS（1）-简介">
-<meta name="twitter:description" content="#LTS(light-task-scheduler)由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+<meta name="twitter:description" content="LTS(light-task-scheduler)
+由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(light-task-">
 <meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
   
@@ -84,7 +87,7 @@ LTS(light-task-">
 						<li>Links</li>
 						
 						
-						<li>Über</li>
+						<li>About</li>
 						
 					</ul>
 				</div>
@@ -238,26 +241,25 @@ LTS(light-task-">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="LTS-light-task-scheduler"><a href="#LTS-light-task-scheduler" class="headerlink" title="#LTS(light-task-scheduler)"></a>#LTS(light-task-scheduler)</h2><p>由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job" target="_blank" rel="external">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
+        <h1 id="LTS-light-task-scheduler"><a href="#LTS-light-task-scheduler" class="headerlink" title="LTS(light-task-scheduler)"></a>LTS(light-task-scheduler)</h1><hr>
+<p>由于业务需求，有很多定时调度任务，因此需要动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job" target="_blank" rel="external">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
 <p>LTS(light-task-scheduler)是一个分布式任务调度的框架，属于淘宝员工的个人开源。它支持实时任务，定时任务，Cron任务，Repeat任务，有较好的伸缩性、扩展性、健壮稳定性因而被多家公司使用。他其构参考了dubbo和hadoop的设计，上手较为方便；同时，针对我们的前述需求，也都能很好解决，因此最终选用LTS。</p>
-<p>##主要功能</p>
-<ol>
+<h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ol>
 <li>支持分布式，解决多点故障，支持动态扩容，容错重试等</li>
 <li>Spring扩展支持，SpringBoot支持，Spring Quartz Cron任务的无缝接入支持</li>
 <li>节点监控支持，任务执行监控支持，JVM监控支持</li>
-<li>后台运维操作支持, 可以动态提交，更改，停止 任务</li>
+<li>后台运维操作支持, 可以动态提交，更改，停止 任务<a id="more"></a>
+</li>
 </ol>
-<p>##任务类型</p>
-<ol>
+<h2 id="任务类型"><a href="#任务类型" class="headerlink" title="任务类型"></a>任务类型</h2><ol>
 <li>实时任务：提交了之后立即就要执行的任务。</li>
 <li>定时任务：在指定时间点执行的任务，譬如 今天3点执行（单次）。</li>
 <li>Cron任务：CronExpression，和quartz类似（但是不是使用quartz实现的）譬如 0 0/1 * ?</li>
 <li>Repeat任务：譬如每隔5分钟执行一次，重复50次就停止。</li>
 </ol>
 <p>在这4种类型的任务中，实际上以应用Cron任务为主，例如添加一个Cron任务用来定时处理执行失败的订单，类似的需求还有很多，Cron表达式强大的语法，能够提供多种时间粒度的定时任务，LTS支持Cron表达式，并可直接在可视化界面根据需求生成相应的Cron表达式，非常方便。对于其他类型的任务，例如实时任务，一般也不需要通过LTS来调度，用消息队列进行处理更为合适，而且像阿里开源的rocketmq，可以为每个任务设定不同的重试策略，即可以为每个任务指定不同的重试时间及周期，而LTS若想在同一个节点执行多个业务逻辑，则不能为每个任务设定不同的重试策略。</p>
-<p>##项目地址<br>github地址:<a href="https://github.com/ltsopensource/light-task-scheduler" target="_blank" rel="external">https://github.com/ltsopensource/light-task-scheduler</a><br>oschina地址:<a href="http://git.oschina.net/hugui/light-task-scheduler" target="_blank" rel="external">http://git.oschina.net/hugui/light-task-scheduler</a><br>oschina项目收录地址:<a href="http://www.oschina.net/p/lts" target="_blank" rel="external">http://www.oschina.net/p/lts</a></p>
-<p>##技术架构</p>
-<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png" alt="lts架构图"></p>
+<h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h2><p>github地址:<a href="https://github.com/ltsopensource/light-task-scheduler" target="_blank" rel="external">https://github.com/ltsopensource/light-task-scheduler</a><br>oschina地址:<a href="http://git.oschina.net/hugui/light-task-scheduler" target="_blank" rel="external">http://git.oschina.net/hugui/light-task-scheduler</a><br>oschina项目收录地址:<a href="http://www.oschina.net/p/lts" target="_blank" rel="external">http://www.oschina.net/p/lts</a></p>
+<h2 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h2><p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png" alt="lts架构图"></p>
 <p>架构设计上，LTS框架中包含以下五种类型的节点：</p>
 <p><strong>JobClient</strong> : 主要负责提交任务, 并接收任务执行反馈结果。<br><strong>JobTracker</strong> : 负责任务调度，接收并分配任务。<br><strong>TaskTracker</strong> : 负责执行任务，执行完反馈给JobTracker。<br><strong>LTS-Monitor</strong> : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信息<br><strong>LTS-Admin</strong> : 管理后台）主要负责节点管理，任务队列管理，监控管理等。  </p>
 <p>LTS的这五种节点都是无状态的，都可以部署多个，通过zk作为注册中心，可以实现动态扩容，来实现更大的负载量。并且框架采用FailStore策略使LTS具有很好的容错能力。</p>
@@ -265,17 +267,15 @@ LTS(light-task-">
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * 定时检查 已经down掉的机器的FailStore目录</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CheckDeadFailStoreRunner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!checkDeadFailStoreRunnerStart.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 1. 检测 远程连接 是否可用</span></span><br><span class="line">            <span class="keyword">if</span> (!isRemotingEnable()) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            List&lt;FailStore&gt; failStores = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (failStore <span class="keyword">instanceof</span> AbstractFailStore) &#123;</span><br><span class="line">                failStores = ((AbstractFailStore) failStore).getDeadFailStores();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (CollectionUtils.isEmpty(failStores)) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (FailStore store : failStores) &#123;</span><br><span class="line">                store.open();</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                    List&lt;Pair&lt;String, T&gt;&gt; pairs = store.fetchTop(batchSize, type);</span><br><span class="line">                    <span class="keyword">if</span> (CollectionUtils.isEmpty(pairs)) &#123;</span><br><span class="line">                        store.destroy();</span><br><span class="line">                        LOGGER.info(<span class="string">"&#123;&#125; RetryScheduler, delete store dir[&#123;&#125;] success, identity=[&#123;&#125;] "</span>, name, store.getPath(), appContext.getConfig().getIdentity());</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    List&lt;T&gt; values = <span class="keyword">new</span> ArrayList&lt;T&gt;(pairs.size());</span><br><span class="line">                    List&lt;String&gt; keys = <span class="keyword">new</span> ArrayList&lt;String&gt;(pairs.size());</span><br><span class="line">                    <span class="keyword">for</span> (Pair&lt;String, T&gt; pair : pairs) &#123;</span><br><span class="line">                        keys.add(pair.getKey());</span><br><span class="line">                        values.add(pair.getValue());</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (retry(values)) &#123;</span><br><span class="line">                        LOGGER.info(<span class="string">"&#123;&#125; RetryScheduler, dead local files send success, identity=[&#123;&#125;], size: &#123;&#125;, &#123;&#125;"</span></span><br><span class="line">                                , name, appContext.getConfig().getIdentity(), values.size(), JSON.toJSONString(values));</span><br><span class="line">                        store.delete(keys);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        store.close();</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception ignored) &#123;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">            LOGGER.error(<span class="string">"Run &#123;&#125; master RetryScheduler error, identity=[&#123;&#125;] "</span>, name, appContext.getConfig().getIdentity(), e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            checkDeadFailStoreRunnerStart.set(<span class="keyword">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>架构图中的其他组件的功能如下：</p>
 <p><strong>Registry</strong> ： 注册中心，支持 zookeeper （推荐）和 redis , 主要用于LTS的节点信息暴露和master节点选举。<br><strong>FailStore</strong> ：失败存储，主要用于在部分场景远程RPC调用失败的情况，采取现存储本地KV文件系统，待远程通信恢复的时候再进行数据补偿。FailStore场景主要有 JobClient 提交任务失败时、TaskTracker 返回任务执行结果给 JobTracker 失败时、TaskTracker 提交 BizLogger 失败时。 FailStore默认使用mapdb实现。<br><strong>QueueManager</strong> ：任务队列，支持mysql（默认）和mongodb，主要存储任务数据和任务执行日志等。<br><strong>RPC</strong> ：远程RPC通信框架，支持netty（默认）和mina。<br><strong>NodeGroup</strong> ：节点组，同一个节点组中的节点都是对等的，对外提供相同的服务。譬如 TaskTracker 中有10个nodeGroup都是 send_msg 的节点组，专门执行发送短信的任务。每个节点组中都有一个master节点，这个master节点由LTS动态选出。<br><strong>ClusterName</strong> ：LTS集群，就如上图所示，整个图就是一个集群，包含LTS的五种节点。  </p>
-<p>##LTS执行流程</p>
-<p>以实时任务为例，LTS的执行流程如下图所示，图中的多次falistore策略，能够最大程度保证任务执行的可靠性。</p>
+<h2 id="LTS执行流程"><a href="#LTS执行流程" class="headerlink" title="LTS执行流程"></a>LTS执行流程</h2><p>以实时任务为例，LTS的执行流程如下图所示，图中的多次falistore策略，能够最大程度保证任务执行的可靠性。</p>
 <p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png" alt="LTS执行流程"></p>
-<p>##和其他解决方案的比较</p>
-<p>开源的分布式调度框架较流行的还有当当的Elastic-Job和点评员工开源的XXL-JOB，Elastic-Job又分为Lite版和Cloud版，Elastic-Job-Lite定位为轻量级无中心化解决方案，使用jar包的形式提供分布式任务的协调服务，然而无中心化也就意味着调度日志的收集较为麻烦，虽然对任务分片有较好的支持，但是我司大部分定时任务都很轻量，无需进行任务分片；Elastic-Job-Cloud使用Mesos + Docker的解决方案，额外提供资源治理、应用分发以及进程隔离等服务，但是部署较为麻烦，运维及二次开发成本较大。而XXL-JOB前阵子竟然被努比亚抢注专利，也是醉醉的，框架作者也在对版权找相关部门处理，所以这方面也算是一个隐虑吧。</p>
+<h2 id="和其他解决方案的比较"><a href="#和其他解决方案的比较" class="headerlink" title="和其他解决方案的比较"></a>和其他解决方案的比较</h2><p>开源的分布式调度框架较流行的还有当当的Elastic-Job和点评员工开源的XXL-JOB，Elastic-Job又分为Lite版和Cloud版，Elastic-Job-Lite定位为轻量级无中心化解决方案，使用jar包的形式提供分布式任务的协调服务，然而无中心化也就意味着调度日志的收集较为麻烦，虽然对任务分片有较好的支持，但是我司大部分定时任务都很轻量，无需进行任务分片；Elastic-Job-Cloud使用Mesos + Docker的解决方案，额外提供资源治理、应用分发以及进程隔离等服务，但是部署较为麻烦，运维及二次开发成本较大。而XXL-JOB前阵子竟然被努比亚抢注专利，也是醉醉的，框架作者也在对版权找相关部门处理，所以这方面也算是一个隐虑吧。</p>
 <p>这里主要根据LTS支持的几种任务（ 实时任务、定时任务、Cron任务，Repeat任务） 和其他一些解决方案在应用场景上做比较。</p>
-<p>##实时任务，实时执行<br>关于实时任务的场景下，当任务量比较小的时候，单机都可以完成的时候，可以采用线程池或者去轮训数据库取任务的方式（ 或者其他方式）解决。但如果是任务执行时间比较长或者任务量比较大，单机不足以满足需求的时候，就需要自己去做分布式的功能，还有很重要的是，怎么做容错，怎么保证同一个任务只被一个节点执行，怎么解决执行失败异常的情形等等，你就需要自己去做很多事情，头可能就大了。这时候LTS就派上用场<br>了。因为这些问题 LTS 都帮你解决了，你只需关注你的业务逻辑，而不用为上面的这些事情而烦恼。当然。个人感觉这种情况还是用MQ去解决比较合利用 MQ 的异步去解耦，也同时可以实现分布还有容错等。</p>
-<p>##定时任务</p>
+<p><strong>实时任务，实时执行</strong><br>关于实时任务的场景下，当任务量比较小的时候，单机都可以完成的时候，可以采用线程池或者去轮训数据库取任务的方式（ 或者其他方式）解决。但如果是任务执行时间比较长或者任务量比较大，单机不足以满足需求的时候，就需要自己去做分布式的功能，还有很重要的是，怎么做容错，怎么保证同一个任务只被一个节点执行，怎么解决执行失败异常的情形等等，你就需要自己去做很多事情，头可能就大了。这时候LTS就派上用场<br>了。因为这些问题 LTS 都帮你解决了，你只需关注你的业务逻辑，而不用为上面的这些事情而烦恼。当然。个人感觉这种情况还是用MQ去解决比较合利用 MQ 的异步去解耦，也同时可以实现分布还有容错等。</p>
+<p><strong>定时任务</strong></p>
 <p>某个时间点触发这种场景下，和实时任务相比，只有一个不同，就是要指定一个时间点去执行，可能是1个小时之后，可能是1天之后。若用轮训业务数据库的方式去解决，数据量很小尚可。如果数据量还比较大，轮训数据库势必会影响业务查询。还有就是对于分布式的支持不是很好，还有当表中存在多种不同执行（ 延迟）时间的任务，这个轮训频率就比较关键了，太短，影响性能，太长，影响业务，执行不及时。导致任务执行延迟太久，等等。这时候如果用MQ ，虽然有些MQ 支持延迟队列 (RabbitMQ , RocketMQ 等）。但他们都是指定的一些特定的Level级别延迟，但是不支持任意时间精度。譬如， 1 min , 5 min ， 10 min 等等，不能实现不同粒度的精确定时控制。当然MQ不支持任意时间精度主要在于性能方面的考虑。</p>
 <p>Quartz是一个广泛使用的定时调度框架，它可以支持定时任务．支持某个时间点触发，也支持集群，在架构上是分布式的，没有负责几种管理的节点。Quartz是通过数据库行级锁的方式实现多线程之间任务争用的问题。行锁有嘟些特点呢，开销大，加锁慢，会出现死锁，并发度相比表级锁，页级锁高一点。但是在任务量比较大的时候，并发度较大的时候，行级锁就显得比较吃力了，而且很容易发生死锁。LTS在解决并发性的问题上面，采用了预加载和乐观锁的方式，批量的将部分要执行的任务预加载到内存中，关于这部分可以去看官方文档和相应的源码。另外，Quartz对故障转移做的不是很好。还有就是当QuartZ对应的MySQL数据库挂了，这时候问题就来了客户端提交的任务提交不成功了，如果将这些数据保存在内存中，等MySOL重启起来了再重试提交，那么如果当前节点也挂了，内存中的数据就会全部丢失了。所以这时候需要额外的去做一些失败任务本地持久化的工作。不过如果你用LTS的话，LTS支持Failstore，任务提交失败了，自动进行本地持久化，然后待JobTracker可用的时候重试，不管<br>是JobTracker挂了，还是JobTracker对应的数据库挂了，都是ok的。</p>
-<p>##周期性任务(Cron,Repeat)<br>这种场景下，和定时任务相比，不一样的地方，就只有这类任务是会重复执行的，相当于重复执行的定时任务。所以这种场景下可以参考定时任务的对比。 LTS可以提供统一的后台监控和后台管理，当某次定时任务执行失败，会执行重试操作，并提供执行日志。</p>
+<p><strong>周期性任务(Cron,Repeat)</strong><br>这种场景下，和定时任务相比，不一样的地方，就只有这类任务是会重复执行的，相当于重复执行的定时任务。所以这种场景下可以参考定时任务的对比。 LTS可以提供统一的后台监控和后台管理，当某次定时任务执行失败，会执行重试操作，并提供执行日志。</p>
 
       
     </div>
