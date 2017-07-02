@@ -77,7 +77,7 @@
 						<li>Links</li>
 						
 						
-						<li>About</li>
+						<li>Über</li>
 						
 					</ul>
 				</div>
@@ -196,6 +196,67 @@
 
       <div class="body-wrap">
   
+    <article id="post-分布式任务调度LTS（2）-使用介绍" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/" class="article-date">
+  	<time datetime="2017-06-24T04:53:46.000Z" itemprop="datePublished">2017-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/">分布式任务调度LTS（2）-使用介绍</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LTS-Light-Task-Scheduler-使用介绍"><a href="#LTS-Light-Task-Scheduler-使用介绍" class="headerlink" title="LTS(Light-Task-Scheduler)使用介绍"></a>LTS(Light-Task-Scheduler)使用介绍</h1><h2 id="下载LTS"><a href="#下载LTS" class="headerlink" title="下载LTS"></a>下载LTS</h2><p>首先需要下载LTS源码，oschina地址:<a href="http://git.oschina.net/hugui/light-task-scheduler">http://git.oschina.net/hugui/light-task-scheduler</a>，另外还需要下载官方的example，地址：<a href="https://github.com/ltsopensource/lts-examples">https://github.com/ltsopensource/lts-examples</a>。官方的example提供了详实的例子程序，包含多种使用方式，在使用前推荐仔细阅读。</p>
+<h2 id="编译LTS源码"><a href="#编译LTS源码" class="headerlink" title="编译LTS源码"></a>编译LTS源码</h2><p>进入LTS源码包，内容如下：
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-分布式任务调度LTS（1）-简介" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -222,7 +283,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="LTS-Light-Task-Scheduler"><a href="#LTS-Light-Task-Scheduler" class="headerlink" title="LTS(Light-Task-Scheduler)"></a>LTS(Light-Task-Scheduler)</h1><hr>
+        <h1 id="LTS-Light-Task-Scheduler-简介"><a href="#LTS-Light-Task-Scheduler-简介" class="headerlink" title="LTS(Light-Task-Scheduler)简介"></a>LTS(Light-Task-Scheduler)简介</h1><hr>
 <p>由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
 <p>LTS(light-task-scheduler)是一个分布式任务调度的框架，属于淘宝员工的个人开源。它支持实时任务，定时任务，Cron任务，Repeat任务，有较好的伸缩性、扩展性、健壮稳定性因而被多家公司使用。其架构参考了dubbo和hadoop的设计，容易理解，且上手较为方便；同时，针对我们的前述需求，也都能很好解决，因此最终选用LTS。</p>
 <h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ol>
@@ -752,62 +813,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/07/13/领域驱动开发实践/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-JVM类加载机制（2）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/06/26/JVM类加载机制（2）/" class="article-date">
-  	<time datetime="2016-06-26T11:04:10.000Z" itemprop="datePublished">2016-06-26</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/26/JVM类加载机制（2）/">JVM类加载机制（2）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>类加载器按照层次，从顶层到底层，分为以下三种：<br> （1）启动类加载器（Bootstrap ClassLoader）<br>  这个类加载器负责将存放在JAVA_HOME/lib下的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的类库加载到虚拟机内存中。启动类加载器无法被Java程序直接引用。<br> （2）扩展类加载器（Extension ClassLoader）<br>  这个加载器负责加载JAVA_HOME/lib/ext目录中的，或者被java.ext.dirs系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器<br> （3）应用程序类加载器（Application ClassLoader）<br>  这个加载器是ClassLoader中getSystemClassLoader()方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径（Classpath）上所指定的类库，可直接使用这个加载器，如果应用程序没有自定义自己的类加载器，一般情况下这个就是程序中默认的类加载器<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/06/26/JVM类加载机制（2）/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>

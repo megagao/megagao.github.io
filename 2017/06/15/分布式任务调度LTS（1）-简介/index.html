@@ -6,24 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>分布式任务调度LTS（1）-简介 | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="LTS(Light-Task-Scheduler)
+  <meta name="description" content="LTS(Light-Task-Scheduler)简介
 由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
-LTS(li">
+LTS(">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式任务调度LTS（1）-简介">
 <meta property="og:url" content="http://realfond.cn/2017/06/15/分布式任务调度LTS（1）-简介/index.html">
 <meta property="og:site_name" content="megagao">
-<meta property="og:description" content="LTS(Light-Task-Scheduler)
+<meta property="og:description" content="LTS(Light-Task-Scheduler)简介
 由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
-LTS(li">
+LTS(">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png">
-<meta property="og:updated_time" content="2017-07-01T08:42:10.000Z">
+<meta property="og:updated_time" content="2017-07-02T05:46:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式任务调度LTS（1）-简介">
-<meta name="twitter:description" content="LTS(Light-Task-Scheduler)
+<meta name="twitter:description" content="LTS(Light-Task-Scheduler)简介
 由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
-LTS(li">
+LTS(">
 <meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
   
     <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
@@ -87,7 +87,7 @@ LTS(li">
 						<li>Links</li>
 						
 						
-						<li>About</li>
+						<li>Über</li>
 						
 					</ul>
 				</div>
@@ -241,7 +241,7 @@ LTS(li">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="LTS-Light-Task-Scheduler"><a href="#LTS-Light-Task-Scheduler" class="headerlink" title="LTS(Light-Task-Scheduler)"></a>LTS(Light-Task-Scheduler)</h1><hr>
+        <h1 id="LTS-Light-Task-Scheduler-简介"><a href="#LTS-Light-Task-Scheduler-简介" class="headerlink" title="LTS(Light-Task-Scheduler)简介"></a>LTS(Light-Task-Scheduler)简介</h1><hr>
 <p>由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job" target="_blank" rel="external">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
 <p>LTS(light-task-scheduler)是一个分布式任务调度的框架，属于淘宝员工的个人开源。它支持实时任务，定时任务，Cron任务，Repeat任务，有较好的伸缩性、扩展性、健壮稳定性因而被多家公司使用。其架构参考了dubbo和hadoop的设计，容易理解，且上手较为方便；同时，针对我们的前述需求，也都能很好解决，因此最终选用LTS。</p>
 <h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ol>
@@ -271,7 +271,7 @@ LTS(li">
 <p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png" alt="LTS执行流程"></p>
 <h2 id="和其他解决方案的比较"><a href="#和其他解决方案的比较" class="headerlink" title="和其他解决方案的比较"></a>和其他解决方案的比较</h2><p>开源的分布式调度框架较流行的还有当当的Elastic-Job和点评员工开源的XXL-JOB，Elastic-Job又分为Lite版和Cloud版，Elastic-Job-Lite定位为轻量级无中心化解决方案，使用jar包的形式提供分布式任务的协调服务，然而无中心化也就意味着调度日志的收集较为麻烦，虽然对任务分片有较好的支持，但是我司大部分定时任务都很轻量，无需进行任务分片；Elastic-Job-Cloud使用Mesos + Docker的解决方案，额外提供资源治理、应用分发以及进程隔离等服务，但是部署较为麻烦，运维及二次开发成本较大。而XXL-JOB前阵子竟然被努比亚抢注专利，也是醉醉的，框架作者也在对版权找相关部门处理，所以这方面也算是一个隐虑吧。</p>
 <p>这里主要根据LTS支持的几种任务（ 实时任务、定时任务、Cron任务，Repeat任务） 和其他一些解决方案在应用场景上做比较。</p>
-<p><strong>实时任务，实时执行</strong><br>关于实时任务的场景下，当任务量比较小的时候，单机都可以完成的时候，可以采用线程池或者去轮训数据库取任务的方式（ 或者其他方式）解决。但如果是任务执行时间比较长或者任务量比较大，单机不足以满足需求的时候，就需要自己去做分布式的功能，还有很重要的是，怎么做容错，怎么保证同一个任务只被一个节点执行，怎么解决执行失败异常的情形等等，你就需要自己去做很多事情，头可能就大了。这时候LTS就派上用场<br>了。因为这些问题 LTS 都帮你解决了，你只需关注你的业务逻辑，而不用为上面的这些事情而烦恼。当然。个人感觉这种情况还是用MQ去解决比较合利用 MQ 的异步去解耦，也同时可以实现分布还有容错等。</p>
+<p><strong>实时任务，实时执行</strong><br>关于实时任务的场景下，当任务量比较小的时候，单机都可以完成的时候，可以采用线程池或者去轮训数据库取任务的方式（ 或者其他方式）解决。但如果是任务执行时间比较长或者任务量比较大，单机不足以满足需求的时候，就需要自己去做分布式的功能，还有很重要的是，怎么做容错，怎么保证同一个任务只被一个节点执行，怎么解决执行失败异常的情形等等，你就需要自己去做很多事情，头可能就大了。这时候LTS就派上用场了。因为这些问题LTS都已经解决了，我们只需关注我们的业务逻辑，而不用为上面的这些事情而烦恼。当然，个人感觉这种情况还是用MQ去解决比较合利用 MQ 的异步去解耦，也同时可以实现分布还有容错等。</p>
 <p><strong>定时任务</strong></p>
 <p>某个时间点触发这种场景下，和实时任务相比，只有一个不同，就是要指定一个时间点去执行，可能是1个小时之后，可能是1天之后。若用轮训业务数据库的方式去解决，数据量很小尚可。如果数据量还比较大，轮训数据库势必会影响业务查询。还有就是对于分布式的支持不是很好，还有当表中存在多种不同执行（ 延迟）时间的任务，这个轮训频率就比较关键了，太短，影响性能，太长，影响业务，执行不及时。导致任务执行延迟太久，等等。这时候如果用MQ ，虽然有些MQ 支持延迟队列 (RabbitMQ , RocketMQ 等）。但他们都是指定的一些特定的Level级别延迟，但是不支持任意时间精度。譬如， 1 min , 5 min ， 10 min 等等，不能实现不同粒度的精确定时控制。当然MQ不支持任意时间精度主要在于性能方面的考虑。</p>
 <p>Quartz是一个广泛使用的定时调度框架，它可以支持定时任务．支持某个时间点触发，也支持集群，在架构上是分布式的，没有负责几种管理的节点。Quartz是通过数据库行级锁的方式实现多线程之间任务争用的问题。行锁有嘟些特点呢，开销大，加锁慢，会出现死锁，并发度相比表级锁，页级锁高一点。但是在任务量比较大的时候，并发度较大的时候，行级锁就显得比较吃力了，而且很容易发生死锁。LTS在解决并发性的问题上面，采用了预加载和乐观锁的方式，批量的将部分要执行的任务预加载到内存中，关于这部分可以去看官方文档和相应的源码。另外，Quartz对故障转移做的不是很好。还有就是当QuartZ对应的MySQL数据库挂了，这时候问题就来了客户端提交的任务提交不成功了，如果将这些数据保存在内存中，等MySOL重启起来了再重试提交，那么如果当前节点也挂了，内存中的数据就会全部丢失了。所以这时候需要额外的去做一些失败任务本地持久化的工作。不过如果你用LTS的话，LTS支持Failstore，任务提交失败了，自动进行本地持久化，然后待JobTracker可用的时候重试，不管<br>是JobTracker挂了，还是JobTracker对应的数据库挂了，都是ok的。</p>
@@ -284,6 +284,15 @@ LTS(li">
   
     
 <nav id="article-nav">
+  
+    <a href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          分布式任务调度LTS（2）-使用介绍
+        
+      </div>
+    </a>
   
   
     <a href="/2017/06/06/导入production_ssm到STS/" id="article-nav-older" class="article-nav-link-wrap">

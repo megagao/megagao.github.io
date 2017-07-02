@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>分布式任务调度LTS（2）-使用介绍 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="LTS(Light-Task-Scheduler)使用介绍下载LTS首先需要下载LTS源码，oschina地址:http://git.oschina.net/hugui/light-task-scheduler，另外还需要下载官方的example，地址：https://github.com/ltsopensource/lts-examples。官方的example提供了详实的例子程序，包含多种使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式任务调度LTS（2）-使用介绍">
+<meta property="og:url" content="http://realfond.cn/2017/06/24/分布式任务调度LTS（2）-使用介绍/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="LTS(Light-Task-Scheduler)使用介绍下载LTS首先需要下载LTS源码，oschina地址:http://git.oschina.net/hugui/light-task-scheduler，另外还需要下载官方的example，地址：https://github.com/ltsopensource/lts-examples。官方的example提供了详实的例子程序，包含多种使用">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%25BA%2590%25E7%25A0%2581%25E5%258C%2585.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E7%25BC%2596%25E8%25AF%2591.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/dist.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/dist%25E7%259B%25AE%25E5%25BD%2595%25E7%25BB%2593%25E6%259E%2584.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/example.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E7%259B%2591%25E6%258E%25A7%25E5%258F%25B0.png">
+<meta property="og:updated_time" content="2017-07-02T06:37:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式任务调度LTS（2）-使用介绍">
+<meta name="twitter:description" content="LTS(Light-Task-Scheduler)使用介绍下载LTS首先需要下载LTS源码，oschina地址:http://git.oschina.net/hugui/light-task-scheduler，另外还需要下载官方的example，地址：https://github.com/ltsopensource/lts-examples。官方的example提供了详实的例子程序，包含多种使用">
+<meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%25BA%2590%25E7%25A0%2581%25E5%258C%2585.png">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>Über</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-分布式任务调度LTS（2）-使用介绍" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/" class="article-date">
+  	<time datetime="2017-06-24T04:53:46.000Z" itemprop="datePublished">2017-06-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式任务调度LTS（2）-使用介绍
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LTS-Light-Task-Scheduler-使用介绍"><a href="#LTS-Light-Task-Scheduler-使用介绍" class="headerlink" title="LTS(Light-Task-Scheduler)使用介绍"></a>LTS(Light-Task-Scheduler)使用介绍</h1><h2 id="下载LTS"><a href="#下载LTS" class="headerlink" title="下载LTS"></a>下载LTS</h2><p>首先需要下载LTS源码，oschina地址:<a href="http://git.oschina.net/hugui/light-task-scheduler" target="_blank" rel="external">http://git.oschina.net/hugui/light-task-scheduler</a>，另外还需要下载官方的example，地址：<a href="https://github.com/ltsopensource/lts-examples" target="_blank" rel="external">https://github.com/ltsopensource/lts-examples</a>。官方的example提供了详实的例子程序，包含多种使用方式，在使用前推荐仔细阅读。</p>
+<h2 id="编译LTS源码"><a href="#编译LTS源码" class="headerlink" title="编译LTS源码"></a>编译LTS源码</h2><p>进入LTS源码包，内容如下： <a id="more"></a></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%25BA%2590%25E7%25A0%2581%25E5%258C%2585.png" alt=""></p>
+<p>LTS分别提供了在windows下和Linux下进行编译的脚本，但是需要在编译前配置maven环境，Linux可直接通过yum安装maven，然后将maven配置到/etc/profile文件里的环境变量；Windows可以到<a href="http://maven.apache.org/download.cgi" target="_blank" rel="external">http://maven.apache.org/download.cgi</a>下载maven包，然后解压，并且配置相应的环境变量。</p>
+<p>配置完maven环境之后，可以执行操作系统对应的编译脚本，即build.cmd或者build.sh，这里以在Windows环境下编译为例，编译时会弹出两个命令行窗口，如下：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E7%25BC%2596%25E8%25AF%2591.png" alt=""></p>
+<p>当子窗口出现BUILD SUCCESS时，关闭子窗口，按任意键继续，接下来还会有两个子窗口弹出，也按上述操作，根据提示即可完成编译。编译完成后，会在源码包里面新生成一个dist目录，如下：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/dist.png" alt=""></p>
+<p>这个时候就说明编译成功了。</p>
+<h2 id="安装zookeeper和mysql"><a href="#安装zookeeper和mysql" class="headerlink" title="安装zookeeper和mysql"></a>安装zookeeper和mysql</h2><p>LTS目前支持zookeeper或Redis作为注册中心，主要用于节点信息暴露、监听、master节点选举，建议zookeeper。同样，LTS目前支持mysql和mongodb作为任务队列的存储引擎，用户也是选择其中一个即可。这里我们选取zookeeper和mysql分别作为注册中心和任务队列存储引擎，因此需要配置zookeeper和mysql。</p>
+<p>zk和mysql都可以共用公司已有的，例如zk可以共用dubbo的注册中心zk，他们可以通过不同的znode来进行区分。如果没有现成的zk和mysql部署节点，那就还需要自己安装好。</p>
+<p><strong>安装zookeeper</strong><br>首先到zookeeper的官方网站下载包 <a href="http://apache.fayea.com/zookeeper/" target="_blank" rel="external">http://apache.fayea.com/zookeeper/</a></p>
+<p>这里下的版本是zookeeper-3.4.6.tar.gz上传至服务，解压，修改配置文件,原来的是zoo-sample.cfg,复制创建一个zoo.cfg，zoo.cfg内容如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The number of milliseconds of each tick</span></span><br><span class="line">tickTime=2000</span><br><span class="line"><span class="comment"># The number of ticks that the initial </span></span><br><span class="line"><span class="comment"># synchronization phase can take</span></span><br><span class="line">initLimit=10</span><br><span class="line"><span class="comment"># The number of ticks that can pass between </span></span><br><span class="line"><span class="comment"># sending a request and getting an acknowledgement</span></span><br><span class="line">syncLimit=5</span><br><span class="line"><span class="comment"># the directory where the snapshot is stored.</span></span><br><span class="line"><span class="comment"># do not use /tmp for storage, /tmp here is just </span></span><br><span class="line"><span class="comment"># example sakes. 自己配置 没有的话创建一个</span></span><br><span class="line">dataDir=/home/hadoop/zookeeper/data</span><br><span class="line">dataLogDir=/home/hadoop/zookeeper/<span class="built_in">log</span></span><br><span class="line"><span class="comment"># the port at which the clients will connect </span></span><br><span class="line">clientPort=2181</span><br></pre></td></tr></table></figure>
+<p>然后用zkServer.sh start启动，也可以再启动一个client,zkCli.sh -server localhost:2181,测试连接成功是否成功，注意远程连接该zk时，应开放所配置的2181端口。</p>
+<p><strong>安装mysql</strong><br>mysql的安装可以参见这篇博客，<a href="http://wosyingjun.iteye.com/blog/2306139" target="_blank" rel="external">CentOS7安装mysql5.6</a>，步骤讲解非常细致，推荐！</p>
+<h2 id="修改dist目录下的配置文件"><a href="#修改dist目录下的配置文件" class="headerlink" title="修改dist目录下的配置文件"></a>修改dist目录下的配置文件</h2><p>源码编译后生成的dist目录的文件结构如下：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/dist%25E7%259B%25AE%25E5%25BD%2595%25E7%25BB%2593%25E6%259E%2584.png" alt=""></p>
+<p>我们需要做的就是修改各conf目录下的.cfg文件，这里以tasktracker.cfg文件为例，修改其配置如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注册中心地址，可以是zk，也可以是redis</span></span><br><span class="line">registryAddress=zookeeper://127.0.0.1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 集群名称</span></span><br><span class="line">clusterName=<span class="built_in">test</span>_cluster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 节点组名称</span></span><br><span class="line">nodeGroup=<span class="built_in">test</span>_trade_taskTracker</span><br><span class="line"></span><br><span class="line"><span class="comment"># JobRunner 任务执行类</span></span><br><span class="line">jobRunnerClass=com.github.ltsopensource.startup.tasktracker.test.TestJobRunner</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行线程数</span></span><br><span class="line">workThreads=10</span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过BizLogger 记录的日志</span></span><br><span class="line">bizLoggerLevel=INFO</span><br><span class="line"></span><br><span class="line"><span class="comment"># FailStore 存储引擎</span></span><br><span class="line">configs.job.fail.store=leveldb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用TaskTracker使用Spring，使用的话也要自己引入Spring相关jar</span></span><br><span class="line">useSpring=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 spring配置文件路径,用逗号隔开,如: classpath*:spring/*.xml</span></span><br><span class="line">springXmlPaths=</span><br></pre></td></tr></table></figure></p>
+<p>其他的配置文件也类似，需要将注册中心配置为zk的地址。另外需要注意的是，JobTracker在部署多个节点时，需要为每个节点指定不同的配置文件目录，如上述dist目录中，jobtracker/conf目录下的zoo目录，当我们需要部署第二个JobTracker节点时，拷贝一份zoo目录，然后修改其目录名，启动该JobTracker节点时，通过 jobtracker 配置文件目录名 start 来启动。jobtracker.cfg配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注册中心地址，可以是zk，也可以是redis</span></span><br><span class="line">registryAddress=zookeeper://127.0.0.1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># JobTracker的监听端口</span></span><br><span class="line">listenPort=3502</span><br><span class="line"></span><br><span class="line"><span class="comment"># 集群名称</span></span><br><span class="line">clusterName=<span class="built_in">test</span>_cluster</span><br><span class="line"></span><br><span class="line"><span class="comment"># LTS业务日志, 可选值 console, mysql, mongo</span></span><br><span class="line">configs.job.logger=mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># zk客户端，可选值 zkclient, curator</span></span><br><span class="line">configs.zk.client=zkclient</span><br><span class="line"></span><br><span class="line"><span class="comment"># ---------以下是任务队列配置-----------</span></span><br><span class="line"><span class="comment"># 任务队列，可选值 mysql, mongo</span></span><br><span class="line">configs.job.queue=mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------ 1. 如果是mysql作为任务队列 ------</span></span><br><span class="line">configs.jdbc.url=jdbc:mysql://127.0.0.1:3306/lts</span><br><span class="line">configs.jdbc.username=root</span><br><span class="line">configs.jdbc.password=root</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------ 2. 如果是mongo作为任务队列 ------</span></span><br><span class="line">configs.mongo.addresses=127.0.0.1:27017</span><br><span class="line">configs.mongo.database=lts</span><br><span class="line"><span class="comment"># configs.mongo.username=xxx #如果有的话</span></span><br><span class="line"><span class="comment"># configs.mongo.password=xxx #如果有的话</span></span><br></pre></td></tr></table></figure>
+<p>上面的zk和mysql需要根据自己的部署情况进行配置。</p>
+<h2 id="运行lts-example"><a href="#运行lts-example" class="headerlink" title="运行lts-example"></a>运行lts-example</h2><p>将dist目录拷到Linux服务器上，直接在相应的bin目录下执行sh ./lts-admin.sh start、sh ./jobtracker.sh zoo start，即可成功启动jobtracker和admin节点(admin已经集成了monitor节点，不需要额外启动)。</p>
+<p>另一种方式是将下载的官方例子程序lts-example以maven项目的方式导入idea，然后修改jobtracker、admin、tasktraker的配置文件，如上节所示，然后直接在idea下通过main方法来启动这些节点，如下图所示：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/example.png" alt=""></p>
+<p>启动成功后，访问<a href="http://localhost:8081/index.htm，如果可以看到监控台界面，并且能监测到jobtracker、tasktraker、monitor节点，则说明例子程序已经运行成功！" target="_blank" rel="external">http://localhost:8081/index.htm，如果可以看到监控台界面，并且能监测到jobtracker、tasktraker、monitor节点，则说明例子程序已经运行成功！</a></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E7%259B%2591%25E6%258E%25A7%25E5%258F%25B0.png" alt=""></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/06/15/分布式任务调度LTS（1）-简介/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">分布式任务调度LTS（1）-简介</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="分布式任务调度LTS（2）-使用介绍" data-title="分布式任务调度LTS（2）-使用介绍" data-url="http://realfond.cn/2017/06/24/分布式任务调度LTS（2）-使用介绍/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
