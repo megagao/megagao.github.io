@@ -71,10 +71,10 @@
 				<div class="tips-box hide">
 					<div class="tips-arrow"></div>
 					<ul class="tips-inner">
-						<li>菜单</li>
+						<li>Menu</li>
 						<li>Tags</li>
 						
-						<li>友情链接</li>
+						<li>Links</li>
 						
 						
 						<li>Über</li>
@@ -118,7 +118,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 20px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
 					</div>
 				</section>
 				
@@ -195,6 +195,70 @@
 </nav>
 
       <div class="body-wrap">
+  
+    <article id="post-分布式任务调度LTS（3）-开发实例" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/07/03/分布式任务调度LTS（3）-开发实例/" class="article-date">
+  	<time datetime="2017-07-03T02:58:09.000Z" itemprop="datePublished">2017-07-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/07/03/分布式任务调度LTS（3）-开发实例/">分布式任务调度LTS（3）-开发实例</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LTS-Light-Task-Scheduler-开发实例"><a href="#LTS-Light-Task-Scheduler-开发实例" class="headerlink" title="LTS(Light-Task-Scheduler)开发实例"></a>LTS(Light-Task-Scheduler)开发实例</h1><hr>
+<h2 id="实现方式探讨"><a href="#实现方式探讨" class="headerlink" title="实现方式探讨"></a>实现方式探讨</h2><p>先来回顾一下LTS中的各个节点：</p>
+<p><strong>JobClient</strong> : 主要负责提交任务, 并接收任务执行反馈结果。<br><strong>JobTracker</strong> : 负责任务调度，接收并分配任务。<br><strong>TaskTracker</strong> : 负责执行任务，执行完反馈给JobTracker。<br><strong>LTS-Monitor</strong> : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信息<br><strong>LTS-Admin</strong> : 管理后台）主要负责节点管理，任务队列管理，监控管理等。 </p>
+<p>使用LTS进行开发时，我们只需要实现TaskTracker节点来完成我们的业务逻辑。在分布式系统中，往往使用SOA框架进行远程调用，我们这里以RPC框架dubbo为例来实现与LTS整合开发。</p>
+<p>最开始我们在使用LTS时，是想与dubbo服务解耦，也就是做一个统一调度的TaskTracker节点，然后在TaskTracker中实现一个dispatcher的功能，根据提交任务时传递的参数，再远程调用dubbo服务进行执行。简要过程如下图：
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2017/07/03/分布式任务调度LTS（3）-开发实例/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-分布式任务调度LTS（2）-使用介绍" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -751,68 +815,6 @@
       
         <p class="article-more-link">
           <a  href="/2016/09/10/室内定位系统/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-领域驱动开发实践" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/07/13/领域驱动开发实践/" class="article-date">
-  	<time datetime="2016-07-13T13:36:28.000Z" itemprop="datePublished">2016-07-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/13/领域驱动开发实践/">领域驱动开发实践</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近一个多月比较忙，先是和导师一起去香港参加了一次学术会议，然后开始准备期末考试，接着赶了一篇学术论文发表，这几天又把导师安排的项目赶上进度。博客基本没更新。</p>
-<p>七月十号去岛内参加了coding和3w举办的一场技术分享会，学到了很多知识，见识了很多大牛。几天分享一下王立老师讲的领域驱动的知识（ppt+速记）。</p>
-<p>先做一个自我介绍，我叫王立，曾经在多家上市公司担任架构师和技术经理，包括阿里巴巴，今天很高兴能跟大家来分享领域驱动设计。领域驱动设计大家应该都听说过，你们在实际项目当中有用过的吗？能不能举个手？没有。确实说领域驱动开发是很有难度的，领域驱动开发我接触的时间比较早，10年前就接触。今天我把我这段时间从事领域驱动开发的心得跟大家做一个分享。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/分享/">分享</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2016/07/13/领域驱动开发实践/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>

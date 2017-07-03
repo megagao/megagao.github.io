@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>分布式任务调度LTS（3）-开发实例 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="LTS(Light-Task-Scheduler)开发实例
+实现方式探讨先来回顾一下LTS中的各个节点：
+JobClient : 主要负责提交任务, 并接收任务执行反馈结果。JobTracker : 负责任务调度，接收并分配任务。TaskTracker : 负责执行任务，执行完反馈给JobTracker。LTS-Monitor : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式任务调度LTS（3）-开发实例">
+<meta property="og:url" content="http://realfond.cn/2017/07/03/分布式任务调度LTS（3）-开发实例/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="LTS(Light-Task-Scheduler)开发实例
+实现方式探讨先来回顾一下LTS中的各个节点：
+JobClient : 主要负责提交任务, 并接收任务执行反馈结果。JobTracker : 负责任务调度，接收并分配任务。TaskTracker : 负责执行任务，执行完反馈给JobTracker。LTS-Monitor : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/tasktracker%25E8%25B0%2583%25E5%25BA%25A6.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/tasktracker%25E8%25B0%2583%25E5%25BA%25A6%25E6%2594%25B9%25E8%25BF%259B.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E7%259B%25AE%25E5%25BD%2595%25E7%25BB%2593%25E6%259E%2584.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E4%25BB%25BB%25E5%258A%25A1%25E6%258F%2590%25E4%25BA%25A4.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E4%25BB%25BB%25E5%258A%25A1%25E6%2597%25A5%25E5%25BF%2597.png">
+<meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E8%258A%2582%25E7%2582%25B9%25E7%25AE%25A1%25E7%2590%2586.png">
+<meta property="og:updated_time" content="2017-07-03T05:46:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式任务调度LTS（3）-开发实例">
+<meta name="twitter:description" content="LTS(Light-Task-Scheduler)开发实例
+实现方式探讨先来回顾一下LTS中的各个节点：
+JobClient : 主要负责提交任务, 并接收任务执行反馈结果。JobTracker : 负责任务调度，接收并分配任务。TaskTracker : 负责执行任务，执行完反馈给JobTracker。LTS-Monitor : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信">
+<meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/tasktracker%25E8%25B0%2583%25E5%25BA%25A6.png">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>Über</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 20px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-分布式任务调度LTS（3）-开发实例" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/07/03/分布式任务调度LTS（3）-开发实例/" class="article-date">
+  	<time datetime="2017-07-03T02:58:09.000Z" itemprop="datePublished">2017-07-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式任务调度LTS（3）-开发实例
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="LTS-Light-Task-Scheduler-开发实例"><a href="#LTS-Light-Task-Scheduler-开发实例" class="headerlink" title="LTS(Light-Task-Scheduler)开发实例"></a>LTS(Light-Task-Scheduler)开发实例</h1><hr>
+<h2 id="实现方式探讨"><a href="#实现方式探讨" class="headerlink" title="实现方式探讨"></a>实现方式探讨</h2><p>先来回顾一下LTS中的各个节点：</p>
+<p><strong>JobClient</strong> : 主要负责提交任务, 并接收任务执行反馈结果。<br><strong>JobTracker</strong> : 负责任务调度，接收并分配任务。<br><strong>TaskTracker</strong> : 负责执行任务，执行完反馈给JobTracker。<br><strong>LTS-Monitor</strong> : 主要负责收集各个节点的监控信息，包括任务监控信息，节点JVM监控信息<br><strong>LTS-Admin</strong> : 管理后台）主要负责节点管理，任务队列管理，监控管理等。 </p>
+<p>使用LTS进行开发时，我们只需要实现TaskTracker节点来完成我们的业务逻辑。在分布式系统中，往往使用SOA框架进行远程调用，我们这里以RPC框架dubbo为例来实现与LTS整合开发。</p>
+<p>最开始我们在使用LTS时，是想与dubbo服务解耦，也就是做一个统一调度的TaskTracker节点，然后在TaskTracker中实现一个dispatcher的功能，根据提交任务时传递的参数，再远程调用dubbo服务进行执行。简要过程如下图： <a id="more"></a></p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/tasktracker%25E8%25B0%2583%25E5%25BA%25A6.png" alt=""></p>
+<p>这样做的好处显而易见，LTS与系统的业务逻辑充分解耦，dubbo服务的开发人员不需要关心与LTS的集成，降低了开发的复杂度。但是，由上图可见，任务执行分为两步，JobTracker需要先将任务分发到TaskTracker上，再由TaskTracker中的dispatcher根据任务参数调度相应的dubbo，这样就增加了通信开销；此外，由于使用统一的TaskTracker进行调度，如果有新的dubbo服务需要新增或者一些dubbo服务需要去除，都需要修改TaskTracker并重新部署，这样会影响系统中其他任务的正常调度。</p>
+<p>因此，我们最终采取的是在dubbo的provider中集成TaskTracker，这样可以把每个provider都当成一个TaskTracker节点，节点间的动态上下线互不影响，而且也可以减少系统调用的通信开销。这种方式的简要过程如下：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/tasktracker%25E8%25B0%2583%25E5%25BA%25A6%25E6%2594%25B9%25E8%25BF%259B.png" alt=""></p>
+<p>可以看到，我们将TaskTracker与dubbo服务的provider整合到了一起，TaskTracker也由原来的相当于统一任务分发器的角色转变为与各子系统集成，比如，会员管理系统现在就可以当做一个TaskTracker节点。由于我们单个任务的处理量和复杂度都不是特别大，因此单个TaskTracker只执行一个业务逻辑是不太划算的，因此对于每个TaskTracker，我们仍然使用了dispatcher，根据任务传递的参数，去执行相应的业务逻辑。注意，此时TaskTracker是集成在dubbo的provider中的，因此我们使用dubbo服务就直接通过spring注入过来本地的实现类就行，不需要进行远程调用。</p>
+<h2 id="开发实例"><a href="#开发实例" class="headerlink" title="开发实例"></a>开发实例</h2><h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><p>在系统的服务提供者模块中，实现与LTS中TaskTracker的集成。下图中红框内即为需创建的目录。</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E7%259B%25AE%25E5%25BD%2595%25E7%25BB%2593%25E6%259E%2584.png" alt=""></p>
+<ul>
+<li><strong>task文件夹</strong> ：用来存放业务逻辑实现类，以Task后缀结尾。</li>
+<li><strong>lts</strong> ：存放配置文件。</li>
+</ul>
+<h3 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h3><p>集成TaskTracker节点需添加如下依赖：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">    &lt;!--lts--&gt;</span><br><span class="line">    &lt;com.github.ltsopensource.version&gt;1.7.0&lt;/com.github.ltsopensource.version&gt;</span><br><span class="line">    &lt;!--netty--&gt;</span><br><span class="line">    &lt;io.netty.version&gt;4.0.20.Final&lt;/io.netty.version&gt;</span><br><span class="line">    &lt;!--mapdb--&gt;</span><br><span class="line">    &lt;org.mapdb.version&gt;2.0-beta10&lt;/org.mapdb.version&gt;</span><br><span class="line">&lt;/properties&gt;</span><br><span class="line">&lt;dependencies&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;com.github.ltsopensource&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;lts-spring&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;com.github.ltsopensource.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;com.github.ltsopensource&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;lts&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;com.github.ltsopensource.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;io.netty&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;netty-all&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;io.netty.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.mapdb&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;mapdb&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;$&#123;org.mapdb.version&#125;&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line">&lt;/dependencies&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h3><h4 id="Disconf中配置参数"><a href="#Disconf中配置参数" class="headerlink" title="Disconf中配置参数"></a>Disconf中配置参数</h4><p>配置参数保存在Disconf中的task.properties，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lts.clusterName=lts_cluster</span><br><span class="line">lts.registry.address=zookeeper:<span class="comment">//zookeeper.hkt.com:2181</span></span><br><span class="line">lts.fail.store=mapdb</span><br><span class="line">task.shardField=taskName</span><br><span class="line">task.workThreads=<span class="number">64</span></span><br></pre></td></tr></table></figure>
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><p>创建lts-tasktracker.xml，将其import到spring的主配置文件，配置如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean class="com.github.ltsopensource.spring.tasktracker.Scanner"&gt;</span><br><span class="line">    &lt;!-- 要扫描的JobRunnerItem注解的包，即task包的路径 --&gt;</span><br><span class="line">    &lt;property name="basePackage" value="com.hk.demo.task"/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 注解方式 --&gt;</span><br><span class="line">&lt;bean id="taskTracker" class="com.github.ltsopensource.spring.TaskTrackerAnnotationFactoryBean" init-method="start"&gt;</span><br><span class="line">    &lt;!-- 注册中心地址 --&gt;</span><br><span class="line">    &lt;property name="registryAddress" value="$&#123;lts.registry.address&#125;"/&gt;</span><br><span class="line">    &lt;!-- 集群名，要与同一集群中jobtracker等其他角色配置的集群名一致 --&gt;</span><br><span class="line">    &lt;property name="clusterName" value="$&#123;lts.clusterName&#125;"/&gt;</span><br><span class="line">    &lt;!-- 节点组名，同一节点组中的所有节点对等，即拥有同样的业务逻辑，应与系统名一致，如ubs_TaskTracker --&gt;</span><br><span class="line">    &lt;property name="nodeGroup" value="demo_TaskTracker"/&gt;</span><br><span class="line">    &lt;!-- 使用JobRunnerItem注解一定要使用 JobDispatcher --&gt;</span><br><span class="line">    &lt;property name="jobRunnerClass" value="com.github.ltsopensource.spring.tasktracker.JobDispatcher"/&gt;</span><br><span class="line">    &lt;!-- 分片域，可以是Job对象的属性，也可以是传递的job参数，这里根据传递的taskName参数进行分片，用以选取相应的业务处理方法 --&gt;</span><br><span class="line">    &lt;property name="shardField" value="$&#123;task.shardField&#125;"/&gt;</span><br><span class="line">    &lt;!-- 工作线程数，根据自己任务定义，应不小于本系统的最大任务数,默认是64 --&gt;</span><br><span class="line">    &lt;property name="workThreads" value="$&#123;task.workThreads&#125;"/&gt;</span><br><span class="line">    &lt;!-- 扩展配置，可选配置参见文档 --&gt;</span><br><span class="line">    &lt;property name="configs"&gt;</span><br><span class="line">        &lt;props&gt;</span><br><span class="line">            &lt;prop key="job.fail.store"&gt;$&#123;lts.fail.store&#125;&lt;/prop&gt;</span><br><span class="line">        &lt;/props&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="业务代码实现"><a href="#业务代码实现" class="headerlink" title="业务代码实现"></a>业务代码实现</h3><h4 id="注解介绍"><a href="#注解介绍" class="headerlink" title="注解介绍"></a>注解介绍</h4><h5 id="LTS"><a href="#LTS" class="headerlink" title="@LTS"></a>@LTS</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/**</span><br><span class="line"> * 用于定义一个业务类，通过包扫描加载到spring容器，里面可包含多个业务处理方法</span><br><span class="line"> */</span></span><br><span class="line">   <span class="meta">@Target</span>(&#123;ElementType.TYPE&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> LTS &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="JobRunnerItem"><a href="#JobRunnerItem" class="headerlink" title="@JobRunnerItem"></a>@JobRunnerItem</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/**</span><br><span class="line"> * 用于定义一个业务处理方法，shardValue为调度该方法时传递的参数值</span><br><span class="line"> */</span></span><br><span class="line">   <span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> JobRunnerItem &#123;</span><br><span class="line">    <span class="function">String <span class="title">shardValue</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="任务执行信息"><a href="#任务执行信息" class="headerlink" title="任务执行信息"></a>任务执行信息</h4><p>对于一个任务中包含多个执行次数，例如，某任务包含1000次数据库操作，那么需要将任务中这些操作的具体执行成功次数及执行情况进行记录，执行完成后，通过toString()方法，与任务执行结果一起返回（参照代码样例）。封装了一个TaskMsg对象，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">/**</span><br><span class="line">     * 任务执行信息Bean</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskMsg</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 任务包含的总条数</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> Integer total;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 执行成功的条数</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> Integer success;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * 执行情况信息</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskMsg</span><span class="params">(Integer total, Integer success, String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.total = total;</span><br><span class="line">        <span class="keyword">this</span>.success = success;</span><br><span class="line">        <span class="keyword">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"任务总条数为："</span> + total +</span><br><span class="line">                <span class="string">", 执行成功条数为："</span> + success +</span><br><span class="line">                <span class="string">", 执行信息：'"</span> + message + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    getters and setters ···</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="代码样例"><a href="#代码样例" class="headerlink" title="代码样例"></a>代码样例</h4><p>推荐命名方式为依据相应的dubbo服务接口名，如ubs系统中的LocationService，将调度业务类命名为LocationTask。每一个Task类中可以包含多个处理方法，方法可通过注入本地的dubbo服务实现类或者其他方式实现业务逻辑，但都需返回Result对象作为任务执行结果。任务调度时，通过传递相应方法指定的shardValue值来调度该方法执行。下面给出样例代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">LTS</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BorrowRecordTask</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(BorrowRecordTask.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BorrowRecordService borrowRecordService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JobRunnerItem</span>(shardValue = <span class="string">"BorrowRecordTask-borrow"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">run</span><span class="params">(Job job)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        TaskMsg taskMsg = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// TODO 业务逻辑</span></span><br><span class="line">            logger.info(<span class="string">"执行："</span> + job);</span><br><span class="line"></span><br><span class="line">            logger.info(<span class="string">"执行任务开始"</span>);</span><br><span class="line">            taskMsg = execute(<span class="number">1</span>);</span><br><span class="line">            logger.info(<span class="string">"执行任务结束"</span>);</span><br><span class="line"></span><br><span class="line">            BizLogger bizLogger = LtsLoggerFactory.getBizLogger();</span><br><span class="line">            <span class="comment">// 会发送到 LTS (JobTracker上)</span></span><br><span class="line">            bizLogger.info(<span class="string">"业务日志"</span>);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            logger.info(<span class="string">"Run job failed!"</span>, e);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Result(Action.EXECUTE_EXCEPTION, e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//返回处理结果，可返回如下四种状态：</span></span><br><span class="line">        <span class="comment">//  EXECUTE_SUCCESS: 执行成功,这种情况，直接反馈客户端（如果任务被设置了要反馈给客户端）。</span></span><br><span class="line">        <span class="comment">//  EXECUTE_FAILED：执行失败，这种情况，直接反馈给客户端，不进行重试。</span></span><br><span class="line">        <span class="comment">//  EXECUTE_LATER：稍后执行（需要重试），这种情况，不反馈客户端，重试策略采用30s的策略，默认最大重试次数为10次，用户可以通过参数设置修改这些参数。</span></span><br><span class="line">        <span class="comment">//  EXECUTE_EXCEPTION：执行异常, 这种情况也会重试(重试策略，同上)</span></span><br><span class="line">        <span class="comment">//若结果为业务部分执行成功，并未全部成功，需在设置msg为任务详细执行信息</span></span><br><span class="line">        <span class="keyword">if</span>(taskMsg != <span class="keyword">null</span> &amp;&amp; taskMsg.getTotal()&gt;<span class="number">0</span> &amp;&amp; taskMsg.getTotal() != taskMsg.getSuccess())&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Result(Action.EXECUTE_FAILED, taskMsg.toString());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(Action.EXECUTE_SUCCESS, taskMsg != <span class="keyword">null</span> ? taskMsg.toString() : <span class="string">"执行成功了！"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> TaskMsg <span class="title">execute</span><span class="params">(Integer pageNo)</span> </span>&#123;</span><br><span class="line">        Integer success = <span class="number">0</span>;</span><br><span class="line">        PageRequest pageRequest = <span class="keyword">new</span> PageRequest(pageNo, <span class="number">1000</span>);</span><br><span class="line">        Page&lt;BorrowRecord&gt; page = borrowRecordService.findExpiryRecord(pageRequest, BorrowStatus.BORROW);</span><br><span class="line">        <span class="keyword">for</span> (BorrowRecord borrowRecord : page.getContent()) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                borrowRecordService.setExpiry(borrowRecord.getId(), Operator.generateAutoSystemOperator(<span class="number">100L</span>, <span class="string">"task"</span>));</span><br><span class="line">                logger.info(<span class="string">"执行[借阅逾期]定时任务：借阅记录[&#123;&#125;]设置为逾期成功"</span>, borrowRecord.getId());</span><br><span class="line">                success++;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                logger.error(<span class="string">"执行[借阅逾期]定时任务：借阅记录[&#123;&#125;]设置为逾期失败"</span>, borrowRecord.getId(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (page.getTotalPages() &gt; pageNo) &#123;</span><br><span class="line">            execute(++pageNo);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> TaskMsg(<span class="number">1000</span>, success, <span class="string">"执行情况"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="节点部署"><a href="#节点部署" class="headerlink" title="节点部署"></a>节点部署</h2><p>节点部署情况：</p>
+<ul>
+<li><strong>TaskTracker</strong> ：集成在各子系统中。</li>
+<li><strong>JobTracker</strong> ：部署两台，实现高可靠。</li>
+<li><strong>LTS-Admin</strong> ：一台，可单独部署，也可和其中一台JobTracker部署在相同服务器。</li>
+<li><strong>LTS-Monitor</strong> ：内嵌在LTS-Admin中。</li>
+<li><strong>JobClient</strong> ：未部署，任务提交功能由LTS-Admin代替实现。</li>
+<li><h3 id="TaskTracker部署"><a href="#TaskTracker部署" class="headerlink" title="TaskTracker部署"></a>TaskTracker部署</h3></li>
+</ul>
+<p>由于TaskTracker集成于子系统中，如dubbo服务的provider中，当provider启动时则该TaskTracker也会相应启动，向注册中心自动注册，不需要额外配置部署，并可以动态上线下线、动态扩容。</p>
+<h3 id="JobTracker部署"><a href="#JobTracker部署" class="headerlink" title="JobTracker部署"></a>JobTracker部署</h3><p>JobTracker是进行任务分发的节点，相当于消息队列中的broker。通过light-task-scheduler文件夹编译生成可JobTracker执行文件（已生成，可直接用），修改相应配置中的zookeeper配置和数据库配置即可。具体过程如下：</p>
+<ol>
+<li>运行下载包light-task-scheduler-master根目录下的sh build.sh或build.cmd脚本，会在dist目录下生成lts-{version}-bin文件夹。生成的dist目录结构详见上篇博客。</li>
+<li>其中bin目录主要是JobTracker和LTS-Admin的启动脚本。jobtracker 中是 JobTracker的配置文件和需要使用到的jar包，lts-admin是LTS-Admin相关的war包和配置文件。 lts-{version}-bin的文件结构JobTracker启动。</li>
+<li>如果想启动一个JobTracker节点，直接修改下conf/zoo下的配置文件，然后运行 sh jobtracker.sh zoo start即可，如果你想启动两个JobTracker节点，那么你需要拷贝一份zoo,譬如命名为zoo2,修改下zoo2下的配置文件，然后运行sh jobtracker.sh zoo2 start即可。logs文件夹下生成jobtracker-zoo.out日志。</li>
+</ol>
+<h3 id="LTS-Admin部署"><a href="#LTS-Admin部署" class="headerlink" title="LTS-Admin部署"></a>LTS-Admin部署</h3><p>LTS-Admin是LTS的监控后台，其中内嵌了monitor节点，用来监控任务调度的情况与结果，并可用来做提交任务、删除任务等任务管理工作。LTS-Admin的部署类似于JobTracker，需要修改生成的dist/conf下的lts-admin.cfg和lts-monitor.cfg下的配置，<br>然后运行bin下的sh lts-admin.sh或lts-admin.cmd脚本即可。logs文件夹下会生成lts-admin.out日志，启动成功在日志中会打印出访问地址，用户可以通过这个访问地址访问了。</p>
+<h2 id="任务提交及监控"><a href="#任务提交及监控" class="headerlink" title="任务提交及监控"></a>任务提交及监控</h2><p>用浏览器访问LTS-Admin部署节点的8081端口即可进入LTS控制台，默认登录账号密码均为admin。</p>
+<h3 id="任务管理"><a href="#任务管理" class="headerlink" title="任务管理"></a>任务管理</h3><h4 id="任务提交"><a href="#任务提交" class="headerlink" title="任务提交"></a>任务提交</h4><p>任务提交通过监控台来实现，提交界面如下：</p>
+<p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E4%25BB%25BB%25E5%258A%25A1%25E6%258F%2590%25E4%25BA%25A4.png" alt=""></p>
+<blockquote>
+<p><strong>注意：</strong><br>1、为了任务管理与监控，任务ID命名应规范：子系统名-业务所在类-调度方法。“业务所在类-调度方法”即shardValue。<br>2、任务提交时应指定所调度方法的shardValue，即通过图中红框处的taskName参数传递到任务中，格式为json。例如：{“taskName”:”BorrowRecordTask-borrow”}</p>
+</blockquote>
+<h4 id="任务日志"><a href="#任务日志" class="headerlink" title="任务日志"></a>任务日志</h4><p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E4%25BB%25BB%25E5%258A%25A1%25E6%2597%25A5%25E5%25BF%2597.png" alt=""></p>
+<h3 id="节点管理"><a href="#节点管理" class="headerlink" title="节点管理"></a>节点管理</h3><p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/%25E8%258A%2582%25E7%2582%25B9%25E7%25AE%25A1%25E7%2590%2586.png" alt=""></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/06/24/分布式任务调度LTS（2）-使用介绍/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">分布式任务调度LTS（2）-使用介绍</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="分布式任务调度LTS（3）-开发实例" data-title="分布式任务调度LTS（3）-开发实例" data-url="http://realfond.cn/2017/07/03/分布式任务调度LTS（3）-开发实例/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2017 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
