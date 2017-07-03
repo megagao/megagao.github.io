@@ -7,22 +7,22 @@
   <title>分布式任务调度LTS（1）-简介 | megagao</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="LTS(Light-Task-Scheduler)简介
-由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我们原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式任务调度LTS（1）-简介">
 <meta property="og:url" content="http://realfond.cn/2017/06/15/分布式任务调度LTS（1）-简介/index.html">
 <meta property="og:site_name" content="megagao">
 <meta property="og:description" content="LTS(Light-Task-Scheduler)简介
-由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我们原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
 <meta property="og:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png">
-<meta property="og:updated_time" content="2017-07-02T05:46:17.000Z">
+<meta property="og:updated_time" content="2017-07-03T06:11:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式任务调度LTS（1）-简介">
 <meta name="twitter:description" content="LTS(Light-Task-Scheduler)简介
-由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
+由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我们原来使用的当当开源框架elastic-job的Lite版（项目开源地址：https://github.com/dangdangdotcom/elastic-job），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。
 LTS(">
 <meta name="twitter:image" content="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/lts%25E6%259E%25B6%25E6%259E%2584.png">
   
@@ -87,7 +87,7 @@ LTS(">
 						<li>Links</li>
 						
 						
-						<li>Über</li>
+						<li>About</li>
 						
 					</ul>
 				</div>
@@ -242,7 +242,7 @@ LTS(">
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="LTS-Light-Task-Scheduler-简介"><a href="#LTS-Light-Task-Scheduler-简介" class="headerlink" title="LTS(Light-Task-Scheduler)简介"></a>LTS(Light-Task-Scheduler)简介</h1><hr>
-<p>由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我司原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job" target="_blank" rel="external">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
+<p>由于业务需求，有很多定时任务和周期任务需要调度，因此需要进行动态的任务添加与删除，及手动触发与暂停，同时，我们原来使用的当当开源框架elastic-job的Lite版（项目开源地址：<a href="https://github.com/dangdangdotcom/elastic-job" target="_blank" rel="external">https://github.com/dangdangdotcom/elastic-job</a>），由于没有统一的任务调度中心，因此查看任务执行日志较不方便。</p>
 <p>LTS(light-task-scheduler)是一个分布式任务调度的框架，属于淘宝员工的个人开源。它支持实时任务，定时任务，Cron任务，Repeat任务，有较好的伸缩性、扩展性、健壮稳定性因而被多家公司使用。其架构参考了dubbo和hadoop的设计，容易理解，且上手较为方便；同时，针对我们的前述需求，也都能很好解决，因此最终选用LTS。</p>
 <h2 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h2><ol>
 <li>支持分布式，解决多点故障，支持动态扩容，容错重试等</li>
@@ -269,7 +269,7 @@ LTS(">
 <p><strong>Registry</strong> ： 注册中心，支持 zookeeper （推荐）和 redis , 主要用于LTS的节点信息暴露和master节点选举。<br><strong>FailStore</strong> ：失败存储，主要用于在部分场景远程RPC调用失败的情况，采取现存储本地KV文件系统，待远程通信恢复的时候再进行数据补偿。FailStore场景主要有 JobClient 提交任务失败时、TaskTracker 返回任务执行结果给 JobTracker 失败时、TaskTracker 提交 BizLogger 失败时。 FailStore默认使用mapdb实现。<br><strong>QueueManager</strong> ：任务队列，支持mysql（默认）和mongodb，主要存储任务数据和任务执行日志等。<br><strong>RPC</strong> ：远程RPC通信框架，支持netty（默认）和mina。<br><strong>NodeGroup</strong> ：节点组，同一个节点组中的节点都是对等的，对外提供相同的服务。譬如 TaskTracker 中有10个nodeGroup都是 send_msg 的节点组，专门执行发送短信的任务。每个节点组中都有一个master节点，这个master节点由LTS动态选出。<br><strong>ClusterName</strong> ：LTS集群，就如上图所示，整个图就是一个集群，包含LTS的五种节点。  </p>
 <h2 id="LTS执行流程"><a href="#LTS执行流程" class="headerlink" title="LTS执行流程"></a>LTS执行流程</h2><p>以实时任务为例，LTS的执行流程如下图所示，图中的多次falistore策略，能够最大程度保证任务执行的可靠性。</p>
 <p><img src="https://coding.net/u/megagao/p/ziyuan/git/raw/master/lts/LTS_progress.png" alt="LTS执行流程"></p>
-<h2 id="和其他解决方案的比较"><a href="#和其他解决方案的比较" class="headerlink" title="和其他解决方案的比较"></a>和其他解决方案的比较</h2><p>开源的分布式调度框架较流行的还有当当的Elastic-Job和点评员工开源的XXL-JOB，Elastic-Job又分为Lite版和Cloud版，Elastic-Job-Lite定位为轻量级无中心化解决方案，使用jar包的形式提供分布式任务的协调服务，然而无中心化也就意味着调度日志的收集较为麻烦，虽然对任务分片有较好的支持，但是我司大部分定时任务都很轻量，无需进行任务分片；Elastic-Job-Cloud使用Mesos + Docker的解决方案，额外提供资源治理、应用分发以及进程隔离等服务，但是部署较为麻烦，运维及二次开发成本较大。而XXL-JOB前阵子竟然被努比亚抢注专利，也是醉醉的，框架作者也在对版权找相关部门处理，所以这方面也算是一个隐虑吧。</p>
+<h2 id="和其他解决方案的比较"><a href="#和其他解决方案的比较" class="headerlink" title="和其他解决方案的比较"></a>和其他解决方案的比较</h2><p>开源的分布式调度框架较流行的还有当当的Elastic-Job和点评员工开源的XXL-JOB，Elastic-Job又分为Lite版和Cloud版，Elastic-Job-Lite定位为轻量级无中心化解决方案，使用jar包的形式提供分布式任务的协调服务，然而无中心化也就意味着调度日志的收集较为麻烦，虽然对任务分片有较好的支持，但是我们的大部分定时任务都很轻量，无需进行任务分片；Elastic-Job-Cloud使用Mesos + Docker的解决方案，额外提供资源治理、应用分发以及进程隔离等服务，但是部署较为麻烦，运维及二次开发成本较大。而XXL-JOB前阵子竟然被努比亚抢注专利，也是醉醉的，框架作者也在对版权找相关部门处理，所以这方面也算是一个隐虑吧。</p>
 <p>这里主要根据LTS支持的几种任务（ 实时任务、定时任务、Cron任务，Repeat任务） 和其他一些解决方案在应用场景上做比较。</p>
 <p><strong>实时任务，实时执行</strong><br>关于实时任务的场景下，当任务量比较小的时候，单机都可以完成的时候，可以采用线程池或者去轮训数据库取任务的方式（ 或者其他方式）解决。但如果是任务执行时间比较长或者任务量比较大，单机不足以满足需求的时候，就需要自己去做分布式的功能，还有很重要的是，怎么做容错，怎么保证同一个任务只被一个节点执行，怎么解决执行失败异常的情形等等，你就需要自己去做很多事情，头可能就大了。这时候LTS就派上用场了。因为这些问题LTS都已经解决了，我们只需关注我们的业务逻辑，而不用为上面的这些事情而烦恼。当然，个人感觉这种情况还是用MQ去解决比较合利用 MQ 的异步去解耦，也同时可以实现分布还有容错等。</p>
 <p><strong>定时任务</strong></p>
