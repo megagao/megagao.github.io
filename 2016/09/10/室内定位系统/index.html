@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <title>室内定位系统 | megagao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。相关的专利和软件著作权正在申请过程中。服务器端的代码共享在github上面：http://github.com/megagao/IndoorPos，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="室内定位系统">
+<meta property="og:url" content="http://realfond.cn/2016/09/10/室内定位系统/index.html">
+<meta property="og:site_name" content="megagao">
+<meta property="og:description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。相关的专利和软件著作权正在申请过程中。服务器端的代码共享在github上面：http://github.com/megagao/IndoorPos，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%25A4%25E5%2586%2585%25E5%25AE%259A%25E4%25BD%258D%25E7%25B3%25BB%25E7%25BB%259F%25E6%259E%25B6%25E6%259E%2584%25E5%259B%25BE.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/IndoorPos%25E5%258A%259F%25E8%2583%25BD%25E7%25BB%2593%25E6%259E%2584%25E5%259B%25BE.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E6%2597%25A0%25E7%25BA%25BF%25E4%25BF%25A1%25E5%258F%25B7%25E6%25B8%2590%25E5%258F%2598%25E6%25A8%25A1%25E5%259E%258B.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E8%25AE%25A1%25E7%25AE%2597p0%25E3%2580%2581n.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E4%25B8%2589%25E8%25BE%25B9%25E5%25AE%259A%25E4%25BD%258D%25E6%25B3%2595.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%259B%25B8%25E4%25BA%25A4%25E4%25BA%258E%25E4%25B8%2580%25E7%2589%2587%25E5%258C%25BA%25E5%259F%259F.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E4%25BF%25A1%25E6%25A0%2587%25E8%258A%2582%25E7%2582%25B9%25E4%25B8%258E%25E6%259C%25AA%25E7%259F%25A5%25E8%258A%2582%25E7%2582%25B9%25E8%25B7%259D%25E7%25A6%25BB%25E6%2596%25B9%25E7%25A8%258B%25E7%25BB%2584.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25BE%2597%25E5%2588%25B0%25E7%259A%2584%25E7%25BA%25BF%25E6%2580%25A7%25E5%258C%2596%25E6%2596%25B9%25E7%25A8%258B.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/A%25E3%2580%2581b%25E7%259F%25A9%25E9%2598%25B5.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25BB%2593%25E6%259E%259C.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%258A%25A0%25E6%259D%2583%25E4%25B8%2589%25E8%25BE%25B9.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259A%25E4%25BD%258D%25E7%25AE%2597%25E6%25B3%2595%25E6%25B5%2581%25E7%25A8%258B%25E5%259B%25BE.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25B3%25BB%25E7%25BB%259F%25E7%2599%25BB%25E5%25BD%2595%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259E%25E6%2597%25B6%25E5%25AE%259A%25E4%25BD%258D%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259E%25E6%2597%25B6%25E5%25AE%259A%25E4%25BD%258D%25E5%25A4%259A%25E4%25B8%25AA%25E5%259C%25BA%25E6%2589%2580.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%259D%2597%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%258E%2586%25E5%258F%25B2%25E6%2595%25B0%25E6%258D%25AE%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png">
+<meta property="og:updated_time" content="2016-12-27T08:30:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="室内定位系统">
+<meta name="twitter:description" content="这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。相关的专利和软件著作权正在申请过程中。服务器端的代码共享在github上面：http://github.com/megagao/IndoorPos，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI">
+<meta name="twitter:image" content="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%25A4%25E5%2586%2585%25E5%25AE%259A%25E4%25BD%258D%25E7%25B3%25BB%25E7%25BB%259F%25E6%259E%25B6%25E6%259E%2584%25E5%259B%25BE.png">
+  
+    <link rel="alternative" href="/atom.xml" title="megagao" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/icon.jpg">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/icon.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Mega Gao</a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>Menu</li>
+						<li>Tags</li>
+						
+						<li>Links</li>
+						
+						
+						<li>Über</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+							<li><a href="/tags/随笔">随笔</a></li>
+				        
+							<li><a href="/tags/项目">项目</a></li>
+				        
+							<li><a href="/tags/分享">分享</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+					        
+								<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/分享/" style="font-size: 20px;">分享</a> <a href="/tags/随笔/" style="font-size: 20px;">随笔</a> <a href="/tags/项目/" style="font-size: 10px;">项目</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://dotgeng.github.io/">Dot Geng的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">怕什么真理无穷，进一寸有一寸的欢喜。</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">Mega Gao</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+			
+				<img lazy-src="/icon.jpg" class="js-avatar">
+			
+			</div>
+			<hgroup>
+			  <h1 class="header-author">Mega Gao</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+					<li><a href="/tags/随笔">随笔</a></li>
+		        
+					<li><a href="/tags/项目">项目</a></li>
+		        
+					<li><a href="/tags/分享">分享</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/megagao" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/2758165673#!/u/2758165673?is_all=1" title="weibo">weibo</a>
+			        
+						<a class="mail" target="_blank" href="mailto:megagao@126.com" title="mail">mail</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div class="body-wrap"><article id="post-室内定位系统" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/09/10/室内定位系统/" class="article-date">
+  	<time datetime="2016-09-10T08:10:54.000Z" itemprop="datePublished">2016-09-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      室内定位系统
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/项目/">项目</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是我研一下学期主要做的项目，针对的是对室内环境环境进行定位。基于这个项目，我发表了一篇EI论文，并开发了一套室内定位系统。相关的专利和软件著作权正在申请过程中。服务器端的代码共享在github上面：<a href="http://github.com/megagao/IndoorPos" target="_blank" rel="external">http://github.com/megagao/IndoorPos</a>，里面包含了三种定位算法，三边定位算法、加权三边定位算法和三角形加权质心定位算法。程序采用Spring框架，简化了JDBC和RMI的样板式代码，并配置了Druid数据库连接池，同时，为了满足高并发的需求，采用了NIO框架Netty，更好地支持大量终端同时定位。程序已经Maven化。</p>
+<h1 id="一、室内定位系统简介"><a href="#一、室内定位系统简介" class="headerlink" title="一、室内定位系统简介"></a>一、室内定位系统简介</h1><p>由于卫星信号到达地面时较弱、不能穿透建筑物等问题，在室内环境中无法使用卫星定位。本室内定位系统是一种采用蓝牙4.0 iBeacon基站定位技术，结合高容错定位算法进行室内定位的系统，定位基站廉价、易安置，定位终端可直接采用支持蓝牙4.0的移动终端，由于目前绝大多数移动终端都已支持蓝牙4.0，因此本系统不需要使用额外的定位标签、设备，直接可以通过移动电子设备进行定位。从业务应用的角度来看，本系统可实现对人员的实时定位、导航指路等功能以及贵重物品、车辆的定位；同时还可进行区域人流分析，人员密度分析，停留时间、人员流量统计，特定人员监控，区域报警和人员轨迹查看等多种应用的二次开发。</p>
+ <a id="more"></a>
+<p>室内定位系统可分为基站、被定位终端、服务器、数据库、客户端等五个部分，分别详述如下：</p>
+<ol>
+<li>基站：布置于需要定位的环境，向外发射蓝牙信号，各基站发射频率与发射强度保持一致，每一均有独立ID及相对于定位环境坐标原点的坐标，基站向外发射包括自己ID的信号，基站坐标保存在数据库中。</li>
+<li>被定位终端：所有具备蓝牙4.0功能的设备均可作为被定位终端，其接收基站发来的信号强度值与基站的ID信息，并连同该被定位终端的ID信息，一同发送到服务器中。</li>
+<li>服务器：服务器接收从被定位终端发来的该定位终端ID信息、接收到信号的基站ID信息及对应的信号强度值，并从数据库中取得基站坐标信息，利用定位算法进行定位，得到被定位终端的坐标信息，先发送给客户端，然后写入到数据库。</li>
+<li>数据库：存储定位的相关数据 ，包括高度补偿值、基站坐标、衰减因子值、员工信息，并保存服务器发来的被定位终端的坐标信息。</li>
+<li>客户端：客户端分为PC端、IOS端、Android端，负责接收服务器发来的坐标信息，然后进行前端展示。</li>
+</ol>
+<p>系统的架构图如下：</p>
+<p> <img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%25A4%25E5%2586%2585%25E5%25AE%259A%25E4%25BD%258D%25E7%25B3%25BB%25E7%25BB%259F%25E6%259E%25B6%25E6%259E%2584%25E5%259B%25BE.png" alt="室内定位系统架构图"></p>
+<p>图中各流程注解如下：</p>
+<p>①：基站向需要定位的环境发送包括自身ID、强度值的信号。</p>
+<p>②：被定位终端向服务器发送自身ID、接收到信号的基站ID组及其对应的信号强度值</p>
+<p>③：服务器从数据库中拿到高度补偿值、基站坐标、衰减因子值用以定位。</p>
+<p>④：服务器向客户端发送被定位终端的ID及坐标信息。</p>
+<p>⑤：服务器向数据库中存储时间戳、被定位终端ID及其对应的坐标信息。</p>
+<h1 id="二、本程序简介"><a href="#二、本程序简介" class="headerlink" title="二、本程序简介"></a>二、本程序简介</h1><p>本程序属于室内定位系统的服务器端程序,主要功能有两大块：</p>
+<ol>
+<li>负责接收被定位终端发来的信息并利用定位算法计算定位结果，将定位结果发送给显示客户端进行显示并将定位结果保存到数据库；</li>
+<li>通过发布RMI服务，与客户端进行通信，完成室内定位的相关管理工作。</li>
+</ol>
+<p>本程序的功能结构图如图所示：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/IndoorPos%25E5%258A%259F%25E8%2583%25BD%25E7%25BB%2593%25E6%259E%2584%25E5%259B%25BE.png" alt="IndoorPos功能结构图"></p>
+<h1 id="三、定位算法简介"><a href="#三、定位算法简介" class="headerlink" title="三、定位算法简介"></a>三、定位算法简介</h1><p>本系统采用的是蓝牙4.0 iBeacon定位技术，其原理是定位终端接收到iBeacon基站发来的信号强度，然后根据无线信号强度的渐变模型得出基站与被定位终端的直线距离，然后再根据高度补偿法，得出基站与终端的平面距离，当终端接收到三个以上不同基站的信号，即能得出与三个以上不同基站的水平距离，且这些基站的坐标坐标已知，就可以对这个终端进行定位。</p>
+<h2 id="3-1建模与测量终端到基站的距离"><a href="#3-1建模与测量终端到基站的距离" class="headerlink" title="3.1建模与测量终端到基站的距离"></a>3.1建模与测量终端到基站的距离</h2><p>实际中通常用来测得基站与终端距离的简化无线信号渐变模型如下：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E6%2597%25A0%25E7%25BA%25BF%25E4%25BF%25A1%25E5%258F%25B7%25E6%25B8%2590%25E5%258F%2598%25E6%25A8%25A1%25E5%259E%258B.png" alt="无线信号渐变模型"></p>
+<p>式中，P(d )表示距离基站直线距离为d时终端接收到的信号强度，即RSSI值；P (d)表示距离基站为d时终端接收到的信号功率；为参考距离，为计算方便，通常选择一米处为参考距离；n是路径损耗(Pass Loss)指数，通常是由实际测量得到，障碍物越多，n值越大，从而接收到的平均能量下降的速度会随着距离的增加而变得越来越快 。</p>
+<p>在实际应用中，通常需要实地测量得到基站在一米处接收到的功率值、环境衰减因子、高度补偿三个值，分别记为p0、n、h。其中，h根据终端一般使用时，与基站的垂直距离得到；p0、n测量时，由于具体室内模型的建立与优化，对定位效果影响最大，为使模型能够最大程度符合当前室内环境中的无线信号传播特性，使RSSI测距能获得更高的精度，需要对参数A和n进行优化进而得到当前室内环境下的最优值。一般通过线性回归分析来估计参数和的值，因为RSSI值在超过14m以后基本趋于平缓，不再符合接收信号强度随着距离增大而衰减的规律。所以为保证测距精度，基站固定后，以20 cm为间隔，在距离基站14m的范围内设置70个测量点，即距离基站0.2 m，0.4 m，…，14m等位置。在每个测试点接收100个数据包后，对100个RSSI值求平均值，再以平均后的RSSI值作为终端在该位置收到的信号强度。最后记录RSSI和d的对应关系，这样就得到了70组测量数据()，= 1，2，3，…，100，其中表示距离为时终端接收到的功率值。对所采集的70组测量数据使用线性回归分析，带入以下公式，即可求出p0、n（式中A表示p0）：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E8%25AE%25A1%25E7%25AE%2597p0%25E3%2580%2581n.png" alt="计算p0、n"></p>
+<h2 id="3-2定位"><a href="#3-2定位" class="headerlink" title="3.2定位"></a>3.2定位</h2><p>当接收到三个以上不同基站的信号时，由2.1得到终端与基站的距离之后，便可利用定位算法对基站进行定位。最广泛使用的是三边定位算法，在此基础之上，改进的算法有加权三边定位算法和加权质心定位算法。</p>
+<p><strong>3.2.1 三边定位算法</strong></p>
+<p>在基于测距的定位算法中，三边测量法是比较简单的算法，算法原理为：平面上有三个不共线的基站 A,B,C，和一个未知终端 D，并已测出三个基站到终端D的距离分别为R1，R2，R3，则以三个基站坐标为圆心，三基站到未知终端距离为半径可以画出三个相交的圆，如图下图所示，未知节点坐标即为三圆相交点。 </p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E4%25B8%2589%25E8%25BE%25B9%25E5%25AE%259A%25E4%25BD%258D%25E6%25B3%2595.png" alt="三边定位法"></p>
+<p>然而，在实际测量中，往往由于测量的误差，使三个圆并不交于一点，而相交于一块区域，如下图所示。在此种情况下，便需用其他算法进行求解，如极大似然估计法，最小二乘法进行估计，或者使用三角形质心算法。</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%259B%25B8%25E4%25BA%25A4%25E4%25BA%258E%25E4%25B8%2580%25E7%2589%2587%25E5%258C%25BA%25E5%259F%259F.png" alt="相交于一片区域"></p>
+<p>这里，我们的算法采用最小二乘法求近似解，并针对n个基站（n≥3），已知n个基站的坐标分别为 ()，()，…，() ，未知终端坐标为() ，由以下步骤求解：</p>
+<p>①：建立信标节点与未知节点距离方程组</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E4%25BF%25A1%25E6%25A0%2587%25E8%258A%2582%25E7%2582%25B9%25E4%25B8%258E%25E6%259C%25AA%25E7%259F%25A5%25E8%258A%2582%25E7%2582%25B9%25E8%25B7%259D%25E7%25A6%25BB%25E6%2596%25B9%25E7%25A8%258B%25E7%25BB%2584.png" alt="信标节点与未知节点距离方程组"></p>
+<p>②：上边方程组为非线性方程组，用方程组中前n-1个方程减去第n个方程后，得到线性化的方程：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25BE%2597%25E5%2588%25B0%25E7%259A%2584%25E7%25BA%25BF%25E6%2580%25A7%25E5%258C%2596%25E6%2596%25B9%25E7%25A8%258B.png" alt="得到的线性化方程"></p>
+<p>其中：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/A%25E3%2580%2581b%25E7%259F%25A9%25E9%2598%25B5.png" alt="A、b矩阵"></p>
+<p>③：用最小二乘法求解上边方程得：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25BB%2593%25E6%259E%259C.png" alt="结果"></p>
+<p>X 便是未知终端的坐标计算值。</p>
+<p><strong>3.2.2 加权三边定位算法</strong></p>
+<p>由无线信号强度渐变模型可以发现，当定位终端离基站距离越远时，接收到的RSSI值变化会越来越小，这就会导致距离越远，基站与定位终端的距离误差越大，相应的造成定位误差变大，由此，我们可以采取加权的思想，将距离小的（精确度高）赋予较大的权值，距离大的（精确度低）的赋予较小的权值。</p>
+<p>首先将基站分组。对收集到的所有基站，经由id分为组n后，求组合数C（n，3），并对每组分别进行三边定位；接着根据距离越大定位误差越大的原则，赋以权值(为每个基站到定位终端测得的距离)。最后，由每个组合得到的结果加权得到最终的定位结果。</p>
+<p><strong>3.2.3 加权三角形质心定位算法</strong></p>
+<p>该算法的思想是对收集到的所有基站，经由id分为组n后，求组合数C（n，3），然后对每一个组合的三个基站，以每个基站坐标为圆心，测得的基站到定位终端距离为半径画圆，然后根据交点组成的三角形，求其质心，即为测得的终端坐标。大体如下：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%258A%25A0%25E6%259D%2583%25E4%25B8%2589%25E8%25BE%25B9.png" alt="加权三边"></p>
+<p>然后，根据距离越大定位误差越大的原则，赋以权值(为每个基站到定位终端测得的距离)。最后，由每个组合得到的结果加权得到最终的定位结果。<br>然而，由于误差的存在，且测量时位置并不在每个组合所构成的三角形中间位置，因此，当误差大时，往往所构成的圆是没有交点的（三个圆必须两两存在交点，否则不能用该方法）。</p>
+<p>以上三个算法为了使接收到的基站RSSI更为准确，根据正态分布，去掉了RSSI值排序后两边的极端值，即对接收到的同一基站的所有RSSI值，排序，然后首尾各去掉一部分，然后求其均值，作为接收到的RSSI值测算距离。</p>
+<p><strong>3.3 程序定位算法的执行流程</strong></p>
+<p>定位时，使用实现了Dealer接口的相应算法对象的getLocation(String str)方法得到终端坐标，接下来以WeightTrilateral（加权三边定位算法）为例，给出其运行时序图来演示系统执行的流程：</p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259A%25E4%25BD%258D%25E7%25AE%2597%25E6%25B3%2595%25E6%25B5%2581%25E7%25A8%258B%25E5%259B%25BE.png" alt="定位算法流程图"></p>
+<h1 id="二、系统运行截图"><a href="#二、系统运行截图" class="headerlink" title="二、系统运行截图"></a>二、系统运行截图</h1><p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25B3%25BB%25E7%25BB%259F%25E7%2599%25BB%25E5%25BD%2595%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png" alt="系统登录运行界面"></p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259E%25E6%2597%25B6%25E5%25AE%259A%25E4%25BD%258D%25E7%2595%258C%25E9%259D%25A2.png" alt="实时定位界面"></p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%25AE%259E%25E6%2597%25B6%25E5%25AE%259A%25E4%25BD%258D%25E5%25A4%259A%25E4%25B8%25AA%25E5%259C%25BA%25E6%2589%2580.png" alt="实时定位多个场所"></p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E7%25AE%25A1%25E7%2590%2586%25E6%25A8%25A1%25E5%259D%2597%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png" alt="管理模块运行界面"></p>
+<p><img src="http://coding.net/u/megagao/p/ziyuan/git/raw/master/image/%25E5%258E%2586%25E5%258F%25B2%25E6%2595%25B0%25E6%258D%25AE%25E8%25BF%2590%25E8%25A1%258C%25E7%2595%258C%25E9%259D%25A2.png" alt="历史数据运行界面"></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/12/27/生产管理ERP系统/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          制造装备物联及生产管理系统
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/07/13/领域驱动开发实践/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">领域驱动开发实践</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share_jia">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">Share to: &nbsp; </span>
+		<a class="jiathis_button_facebook"></a> 
+    <a class="jiathis_button_twitter"></a>
+    <a class="jiathis_button_plus"></a> 
+    <a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+    <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="室内定位系统" data-title="室内定位系统" data-url="http://realfond.cn/2016/09/10/室内定位系统/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"megagao"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2018 Mega Gao
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+  </div>
+</body>
+</html>
